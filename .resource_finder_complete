@@ -1,0 +1,30 @@
+Resource gathering completed: 2026-02-17
+
+Topic: Topological Persistence Analysis of LLM Training Dynamics for Scaling Prediction
+
+Deliverables:
+  - literature_review.md: Comprehensive synthesis of 16+ papers across 3 categories
+  - resources.md: Complete resource catalog (papers, datasets, code, packages, pipelines)
+  - papers/: 22 PDFs + 5 deep-reading notes files + README.md
+  - datasets/: Pythia checkpoint configs (6 checkpoints), synthetic training curves, download scripts + README.md
+  - code/: 3 cloned repositories (pythia, giotto-tda, ripser-py) + README.md
+  - .venv/: Isolated Python environment with full TDA + ML stack installed
+
+Paper categories:
+  1. TDA Applied to Loss Landscapes and Neural Network Structure (8 papers)
+  2. Neural Scaling Laws and Training Dynamics (10 papers)
+  3. TDA Tools and Methods (4 papers)
+
+Deep-read papers with detailed notes:
+  1. Rieck et al. (ICLR 2019) - Neural Persistence
+  2. Xie et al. (NeurIPS Workshop 2024) - Loss Landscape Topology
+  3. Geniesse et al. (2024) - Topological Landscape Profiles
+  4. Bordelon et al. (ICML 2024) - Dynamical Model of Scaling Laws
+  5. Ballarin/Bucarelli et al. (Neural Networks 2024) - Betti Number Bounds
+
+Key installed packages:
+  torch==2.10.0+cpu, transformers==5.2.0, giotto-tda==0.6.2, ripser==0.6.14,
+  persim==0.3.8, numpy==1.26.4, scipy==1.17.0, scikit-learn==1.3.2,
+  matplotlib==3.10.8, datasets==4.5.0
+
+Key gap confirmed: No prior work applies TDA to LLM/transformer training dynamics.

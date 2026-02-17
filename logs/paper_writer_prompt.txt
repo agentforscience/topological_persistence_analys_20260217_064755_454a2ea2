@@ -1,0 +1,945 @@
+You are an academic paper writer. Generate a complete NEURIPS style paper
+based on the experiment results provided.
+
+════════════════════════════════════════════════════════════════════════════════
+                         IMPORTANT: BEFORE YOU START
+════════════════════════════════════════════════════════════════════════════════
+
+Before writing any content, you MUST complete these steps:
+
+1. READ THE SKILL: Review the paper-writer skill at templates/skills/paper-writer/SKILL.md
+2. READ THE STYLE GUIDE: Study templates/paper_writing/lab_style_guide.md carefully
+3. REVIEW EXAMPLES: Browse paper_examples/ for formatting and language patterns:
+   - Look at sections/1.introduction.tex for language style
+   - Look at tables/*.tex for table formatting
+   - Look at commands/*.tex for macro usage
+4. USE COMMAND TEMPLATES: Copy templates/paper_writing/commands/ to paper_draft/commands/
+
+CRITICAL: Reference example papers for FORMATTING and LANGUAGE STYLE only.
+Do NOT copy content, phrasing, or narrative structure from the example papers.
+The examples are in a different research domain - focus only on presentation style.
+
+════════════════════════════════════════════════════════════════════════════════
+                            EXPERIMENT REPORT
+════════════════════════════════════════════════════════════════════════════════
+
+# Topological Persistence Analysis of LLM Training Dynamics for Scaling Prediction
+
+## 1. Executive Summary
+
+We investigated whether persistent topological features extracted from the weight spaces of small transformer language models can serve as early predictors of optimal scaling decisions. We trained five GPT-style models (2.9K–97K parameters) on Wikitext-2 with 51 checkpoints each, computed neural persistence and Vietoris-Rips persistent homology at every checkpoint, and analyzed correlations with training loss and model size. Our key finding is that **H₀ total persistence from Vietoris-Rips filtration is strongly anticorrelated with training loss** (Spearman ρ = -0.59 to -0.91, p &lt; 10⁻⁵), with the correlation strengthening monotonically as model size increases. When combined with loss curve extrapolation, TDA features reduce final loss prediction error by 10–29% compared to loss-only baselines when using 30–50% of training data. These results, validated on real Pythia-14m checkpoints, suggest that topological features capture complementary information about training dynamics that could inform scaling decisions.
+
+## 2. Goal
+
+**Hypothesis**: The loss landscapes and parameter evolution trajectories of efficiently trained small LLMs exhibit persistent topological features that correlate with optimal scaling decisions and training termination points.
+
+**Importance**: Training large language models costs millions of dollars. The decision of when to stop training a current model and scale up is typically made using simple loss curve extrapolation. If topological features of the weight space provide complementary signals about training efficiency and convergence, they could reduce computational waste.
+
+**Gap filled**: Prior work (Ballester et al. 2024 survey) explicitly identified that TDA has not been applied to transformer/LLM training dynamics. No prior work connects topological features to scaling law predictions.
+
+## 3. Data Construction
+
+### Dataset Description
+- **Training corpus**: Wikitext-2-raw-v1 (HuggingFace datasets), 10.9M characters
+- **Tokenization**: Character-level (vocab_size=128), max sequence length=128
+- **Rationale**: Character-level tokenization ensures a controlled, deterministic setup without BPE tokenizer artifacts, suitable for studying topological properties of the weight space itself
+
+### Model Family
+
+| Model | Parameters | Hidden Dim | Layers | Heads | Final Loss |
+|-------|-----------|------------|--------|-------|------------|
+| tiny-3k | 2,936 | 8 | 1 | 1 | 2.466 |
+| small-7k | 7,408 | 16 | 1 | 2 | 2.099 |
+| med-21k | 20,640 | 24 | 2 | 2 | 1.853 |
+| large-46k | 46,368 | 32 | 3 | 4 | 1.653 |
+| xl-97k | 97,200 | 48 | 3 | 4 | 1.468 |
+
+### Training Configuration
+- **Steps**: 5,000 per model
+- **Batch size**: 64
+- **Optimizer**: AdamW (lr=3e-3, weight_decay=0.01)
+- **Schedule**: Cosine with 200-step warmup
+- **Gradient clipping**: max_norm=1.0
+- **Checkpoints**: Every 100 steps (51 per model, 255 total)
+- **Seed**: 42
+
+### Validation Dataset
+- **Pythia-14m** (EleutherAI): 14M parameter GPT-NeoX model, 7 checkpoints spanning full training (step 0 to 143,000)
+
+### Data Quality
+- All 255 checkpoints saved successfully
+- Loss curves show expected monotonic decrease
+- Scaling behavior follows expected power law: final loss scales as N^(-0.144) (R²=0.997)
+
+## 4. Experiment Description
+
+### Methodology
+
+#### High-Level Approach
+1. Train a family of GPT-style transformer models spanning ~30x in parameter count
+2. At each checkpoint, compute two classes of topological features:
+   - **Neural Persistence** (Rieck et al. 2019): H₀ persistent homology of the weight graph per layer, using descending absolute-weight filtration
+   - **Vietoris-Rips Persistence**: H₀ and H₁ persistent homology of the weight-space point cloud (treating neuron weight vectors as points)
+3. Analyze temporal evolution of topological features, their correlation with training metrics, and their utility for predicting final model performance
+
+#### Why This Method?
+- Neural persistence is computationally efficient (O(n·α(n)) per layer via union-find) and directly captures weight magnitude structure
+- Vietoris-Rips persistence captures geometric relationships between neurons in weight space, providing complementary information
+- Both methods are well-established in the TDA literature but have not been applied to transformer training dynamics
+
+### Implementation Details
+
+#### Tools and Libraries
+| Library | Version | Purpose |
+|---------|---------|---------|
+| PyTorch | 2.6.0+cu124 | Model training (GPU-accelerated) |
+| ripser | 0.6.14 | Vietoris-Rips persistent homology |
+| giotto-tda | 0.6.2 | TDA utilities and verification |
+| persim | 0.3.8 | Persistence diagram comparisons |
+| scipy | 1.17.0 | Statistical analysis |
+| transformers | 5.2.0 | Pythia model loading |
+
+#### Hyperparameters
+| Parameter | Value | Selection Method |
+|-----------|-------|------------------|
+| Learning rate | 3e-3 | Standard for small transformers |
+| Warmup steps | 200 | 4% of training |
+| Weight decay | 0.01 | Default AdamW |
+| Batch size | 64 | GPU memory headroom |
+| Max VR points | 200 | Balance of detail vs. compute |
+| VR max dimension | 1 | H₀ + H₁ |
+
+#### Hardware
+- 2x NVIDIA RTX 3090 (24GB each)
+- Training time: ~250s total for all 5 models
+- TDA extraction: ~16s for all 255 checkpoints
+- Pythia validation: ~15s for 7 checkpoints
+
+### Raw Results
+
+#### Training Loss Scaling
+Loss follows a near-perfect power law with model size:
+
+| Model | Parameters | Final Loss | Predicted (N^-0.144) |
+|-------|-----------|------------|---------------------|
+| tiny-3k | 2,936 | 2.466 | 2.474 |
+| small-7k | 7,408 | 2.099 | 2.101 |
+| med-21k | 20,640 | 1.853 | 1.847 |
+| large-46k | 46,368 | 1.653 | 1.665 |
+| xl-97k | 97,200 | 1.468 | 1.514 |
+
+R² = 0.997, ρ = -1.00 (p &lt; 10⁻²⁴)
+
+#### H₀ Total Persistence vs Loss (Key Finding)
+
+| Model | Spearman ρ | p-value | 95% Bootstrap CI |
+|-------|-----------|---------|-----------------|
+| tiny-3k | -0.590 | 5.2e-06 | [-0.796, -0.350] |
+| small-7k | -0.854 | 1.7e-15 | [-0.938, -0.710] |
+| med-21k | -0.866 | 2.3e-16 | [-0.946, -0.713] |
+| large-46k | -0.900 | 3.0e-19 | [-0.966, -0.769] |
+| xl-97k | -0.907 | 4.7e-20 | [-0.970, -0.790] |
+
+**The correlation strengthens monotonically with model size.** This is a key finding: the topological signal becomes more informative as model complexity increases.
+
+#### Neural Persistence vs Loss
+
+| Model | Spearman ρ | p-value | Direction |
+|-------|-----------|---------|-----------|
+| tiny-3k | -0.312 | 0.026 | NP ↑ as loss ↓ |
+| small-7k | +0.031 | 0.829 | Not significant |
+| med-21k | +0.659 | 1.5e-07 | NP ↑ early then plateau |
+| large-46k | +0.615 | 1.6e-06 | NP tracks loss decline |
+| xl-97k | +0.530 | 6.4e-05 | NP tracks loss decline |
+
+Neural persistence shows a size-dependent relationship: in the smallest model, higher NP correlates with lower loss (as in Rieck et al. 2019), while in larger models, the relationship inverts due to the NP metric capturing different dynamics in multi-layer networks.
+
+#### H₁ (Loops) Persistence vs Loss
+
+| Model | Spearman ρ | p-value |
+|-------|-----------|---------|
+| tiny-3k | -0.641 | 4.1e-07 |
+| small-7k | -0.636 | 5.2e-07 |
+| med-21k | -0.580 | 8.0e-06 |
+| large-46k | -0.492 | 2.5e-04 |
+| xl-97k | +0.053 | 0.714 |
+
+H₁ persistence is strongly anticorrelated with loss in smaller models but the relationship weakens with scale, suggesting loops in the weight space are more dynamically relevant at smaller scales.
+
+#### Scaling Prediction Results
+
+Using early training data to predict final loss:
+
+| Train Fraction | Loss-Only MAE | TDA-Only MAE | Combined MAE | Combined Improvement |
+|---------------|---------------|--------------|--------------|---------------------|
+| 20% | 0.1064 | 0.2634 | 0.1486 | -39.7% (worse) |
+| 30% | 0.1011 | 0.1499 | 0.0903 | **+10.6%** |
+| 50% | 0.0860 | 0.0554 | 0.0610 | **+29.0%** |
+
+**TDA features outperform loss-only extrapolation when using 50% of training data** (MAE: 0.055 vs 0.086). The combined model achieves the best performance at 30% of training.
+
+#### Phase Transition Detection
+
+| Model | Max NP Change Step | Diminishing Returns Step | Optimal Fraction |
+|-------|-------------------|--------------------------|-----------------|
+| tiny-3k | 300 (6%) | 800 (16%) | 16% |
+| small-7k | 300 (6%) | 400 (8%) | 8% |
+| med-21k | 300 (6%) | 1800 (36%) | 36% |
+| large-46k | 200 (4%) | 1500 (30%) | 30% |
+| xl-97k | 300 (6%) | 1600 (32%) | 32% |
+
+Larger models have later diminishing returns points (30-36% vs 8-16% for small models), suggesting they benefit from longer training—a topological signal consistent with compute-optimal training principles.
+
+#### Scaling of TDA Features with Model Size
+
+| Feature | Power Law Exponent | R² | Spearman ρ | p-value |
+|---------|-------------------|-----|-----------|---------|
+| Final loss | -0.144 | 0.997 | -1.00 | &lt;10⁻²⁴ |
+| H₀ total persistence | +0.204 | 0.852 | +0.90 | 0.037 |
+| Neural persistence | -0.024 | 0.266 | -0.30 | 0.624 |
+
+H₀ total persistence scales significantly with model size (ρ = 0.90, p = 0.037): larger models develop more persistent topological features in their weight spaces.
+
+#### Pythia-14m Validation
+
+| Step | NP Mean | NP Std | H₀ Total |
+|------|---------|--------|----------|
+| 0 | 0.338 | 0.029 | 69.7 |
+| 1,000 | 0.377 | 0.067 | 69.4 |
+| 5,000 | 0.484 | 0.132 | 70.9 |
+| 10,000 | 0.531 | 0.147 | 69.8 |
+| 50,000 | 0.611 | 0.146 | 54.4 |
+| 100,000 | 0.627 | 0.140 | 46.1 |
+| 143,000 | 0.636 | 0.132 | 45.4 |
+
+Key observations:
+- **Neural persistence increases monotonically** from 0.338 to 0.636 (+88%), confirming the trend observed in our small models
+- **H₀ total persistence decreases** from 69.7 to 45.4 (-35%), indicating the weight space becomes more connected during training
+- The rate of NP change diminishes over training, consistent with the &#34;diminishing returns&#34; signal detected in our models
+
+### Visualizations
+
+All plots saved to `results/plots/`:
+- `summary_figure.png`: 4-panel overview (loss curves, NP evolution, H₀ vs loss, scaling)
+- `training_curves.png`: Loss curves for all models
+- `neural_persistence_evolution.png`: NP trajectory over training
+- `vr_persistence_evolution.png`: H₀ and H₁ evolution
+- `scaling_relationships.png`: TDA features vs model size (log scale)
+- `correlation_heatmap.png`: Spearman correlation matrix
+- `prediction_comparison.png`: Prediction accuracy comparison
+- `np_vs_loss_scatter.png`: NP vs loss colored by training step
+- `pythia_validation.png`: Pythia-14m TDA analysis
+- `combined_scaling.png`: Our models + Pythia scaling comparison
+
+## 5. Result Analysis
+
+### Key Findings
+
+1. **H₀ total persistence is a robust training progress indicator**: The VR H₀ total persistence of the weight-space point cloud shows strong, statistically significant anticorrelation with training loss across all model sizes (ρ = -0.59 to -0.91, all p &lt; 10⁻⁵). This means that as training progresses and loss decreases, the weight space develops more persistent connected structure.
+
+2. **The topological signal strengthens with model size**: The H₀-loss correlation increases monotonically from |ρ| = 0.59 (3K params) to |ρ| = 0.91 (97K params). This is the most promising finding for scaling applications: topological features become more informative precisely when they are most needed—at larger scales.
+
+3. **TDA features provide complementary predictive information**: When combined with loss curve extrapolation, TDA features improve prediction of final model loss by 10.6% (at 30% training) and 29.0% (at 50% training). However, TDA-only prediction underperforms loss-only extrapolation with very little training data (20%).
+
+4. **Phase transitions in topological features correlate with training efficiency**: The point at which neural persistence rate of change diminishes occurs later in training for larger models (30-36% vs 8-16%), suggesting that topological features can detect when a model is approaching diminishing returns from continued training.
+
+5. **Results validated on real LLM (Pythia-14m)**: The same qualitative trends (monotonically increasing NP, decreasing H₀ total persistence) are observed in a real 14M-parameter transformer trained on The Pile, confirming that our small-model findings generalize to real LLM architectures.
+
+### Hypothesis Testing Results
+
+**H1** (NP increases during training): **Partially supported.** NP increases monotonically in Pythia-14m. In our small models, the relationship is more nuanced—NP shows size-dependent behavior, with positive correlation in larger models (ρ = 0.53 to 0.66, p &lt; 10⁻⁴) but negative in the smallest.
+
+**H2** (Weight-space topological features show phase transitions): **Supported.** All models show a clear rapid-change phase (first 4-6% of training) followed by diminishing returns, detectable via neural persistence rate of change. The transition point scales with model size.
+
+**H3** (Topological features follow scaling relationships): **Partially supported.** H₀ total persistence scales significantly with model size (ρ = 0.90, p = 0.037), following a power law with exponent 0.204. Neural persistence does not show a statistically significant scaling relationship (p = 0.624), though the sample size is small (n=5).
+
+**H4** (TDA features improve scaling predictions): **Supported with caveats.** Combined TDA+loss prediction outperforms loss-only prediction when sufficient training data is available (≥30% of steps). With only 20% of training data, TDA features add noise rather than signal.
+
+### Surprises and Insights
+
+1. **Sign reversal of NP-loss correlation with model size**: The smallest model shows NP decreasing with loss (as reported in Rieck et al. 2019 for simple networks), while larger models show the opposite pattern. This likely reflects the different dynamics of single-layer vs multi-layer networks, where deeper architectures develop more structured weight patterns that increase NP even as loss decreases.
+
+2. **H₁ persistence weakens with scale**: We expected higher-dimensional topological features (loops) to become more informative at larger scales, but instead H₁ vs loss correlation weakened from ρ = -0.64 (3K) to ρ = +0.05 (97K). This suggests that loop structures in the weight space are a small-scale phenomenon that washes out in larger networks.
+
+3. **H₀ total persistence decreases during training**: This means the weight-space point cloud becomes more &#34;connected&#34; (fewer isolated clusters) as training progresses, suggesting weight vectors converge toward a lower-dimensional manifold.
+
+### Error Analysis
+
+- **TDA-only prediction at 20% train**: The TDA-only predictor overestimates loss by ~0.26 MAE, primarily because early topological features have not yet developed sufficient structure to be predictive. The NP trajectory is still in its rapid-change phase.
+- **Weight norm correlations are NaN**: The weight norm remained essentially constant throughout training for all models (likely due to weight decay keeping norms stable), resulting in undefined Spearman correlations.
+
+### Limitations
+
+1. **Small model scale**: Our largest model (97K parameters) is orders of magnitude smaller than production LLMs. While Pythia-14m validation is encouraging, the gap between 97K and 14M parameters is large, and the gap to GPT-scale (100B+) is enormous.
+
+2. **Character-level tokenization**: Using character-level tokenization may produce different weight-space geometry than BPE-tokenized models. This was a deliberate simplification for controlled experiments.
+
+3. **Limited model diversity**: All models share the same architectural family (decoder-only transformer). Results may not generalize to encoder-decoder or other architectures.
+
+4. **Simple prediction model**: Our TDA-based prediction uses a simple heuristic (NP rate × remaining steps). More sophisticated prediction models (e.g., regression on persistence diagram features) could potentially improve performance.
+
+5. **Small sample size for scaling analysis**: With only 5 model sizes, power-law fits have limited statistical power. The scaling trends are suggestive but not definitive.
+
+6. **Computational cost of TDA at scale**: While neural persistence is efficient (near-linear time), full VR persistence on weight spaces of billion-parameter models would be prohibitively expensive without aggressive subsampling.
+
+## 6. Conclusions
+
+### Summary
+Persistent topological features of transformer weight spaces—particularly H₀ total persistence from Vietoris-Rips filtration—provide statistically significant signals about training progress that correlate with and complement traditional loss curve metrics. The topological signal strengthens with model size, and when combined with loss extrapolation, improves final loss prediction by 10–29%. These findings are validated on real Pythia-14m checkpoints, demonstrating the method&#39;s applicability to actual LLM architectures.
+
+### Implications
+- **Practical**: TDA features could augment existing scaling prediction frameworks by providing structural information about training dynamics not captured by scalar loss metrics alone.
+- **Theoretical**: The increasing correlation between H₀ persistence and loss with model size suggests a fundamental connection between weight-space topology and learning dynamics that deepens with model complexity.
+- **Methodological**: Per-layer neural persistence and subsampled VR persistence are computationally tractable for models up to at least 14M parameters, making this approach feasible as a training monitoring tool.
+
+### Confidence in Findings
+- **High confidence**: H₀ total persistence vs loss correlation (replicated across all model sizes, validated on Pythia-14m, all p &lt; 10⁻⁵)
+- **Moderate confidence**: Combined prediction improvement (consistent across train fractions ≥30%, but based on simple prediction model)
+- **Low confidence**: Scaling law for TDA features (limited by n=5 model sizes and small parameter range)
+
+## 7. Next Steps
+
+### Immediate Follow-ups
+1. **Scale to Pythia suite**: Compute TDA features across all Pythia checkpoints (14M to 2.8B) to test whether the H₀-loss correlation continues to strengthen with model size.
+2. **Improved prediction model**: Replace the heuristic TDA predictor with a regression model trained on persistence diagram features (persistence images, persistence landscapes).
+3. **Layer-specific analysis**: Investigate whether different layers exhibit different topological phase transitions and whether attention vs MLP layers differ.
+
+### Alternative Approaches
+- **Persistent homology dimension** (Birdal et al. 2021): Compute the fractal dimension of weight trajectories via PH, which has theoretical connections to generalization bounds.
+- **Merge tree analysis** (Xie et al. 2024): Compute merge trees on loss landscape projections for richer topological characterization.
+- **Representation topology divergence**: Track how activation-space topology changes during training.
+
+### Broader Extensions
+- **Multi-scale training monitoring**: Develop a dashboard that tracks topological features alongside standard metrics during LLM training.
+- **Automated scaling decisions**: Build a decision system that uses topological phase transitions to recommend when to stop training and scale up.
+- **Cross-architecture study**: Test whether the same topological signals appear in encoder-decoder, mixture-of-experts, and state-space model architectures.
+
+### Open Questions
+1. Why does the NP-loss correlation sign reverse with model size?
+2. What determines the critical training fraction at which TDA features become predictive?
+3. Does the H₀ persistence scaling exponent (0.204) have a theoretical explanation?
+4. Can topological features predict not just final loss but downstream task performance?
+
+## References
+
+1. Rieck, B., et al. &#34;Neural Persistence: A Complexity Measure for Deep Neural Networks Using Algebraic Topology.&#34; ICLR 2019.
+2. Xie, T., et al. &#34;Evaluating Loss Landscapes from a Topology Perspective.&#34; NeurIPS Workshop 2024.
+3. Ballester, R., et al. &#34;TDA for Neural Network Analysis: A Comprehensive Survey.&#34; arXiv:2312.05840, 2024.
+4. Kaplan, J., et al. &#34;Scaling Laws for Neural Language Models.&#34; arXiv:2001.08361, 2020.
+5. Hoffmann, J., et al. &#34;Training Compute-Optimal Large Language Models.&#34; arXiv:2203.15556, 2022.
+6. Bordelon, B., et al. &#34;A Dynamical Model of Neural Scaling Laws.&#34; ICML 2024.
+7. Biderman, S., et al. &#34;Pythia: A Suite for Analyzing Large Language Models Across Training and Scaling.&#34; ICML 2023.
+8. Tauzin, G., et al. &#34;giotto-tda: A Topological Data Analysis Toolkit for Machine Learning and Data Exploration.&#34; JMLR 2021.
+9. Birdal, T., et al. &#34;Intrinsic Dimension, Persistent Homology and Generalization in Neural Networks.&#34; NeurIPS 2021.
+10. Li, H., et al. &#34;Visualizing the Loss Landscape of Neural Nets.&#34; NeurIPS 2018.
+
+
+════════════════════════════════════════════════════════════════════════════════
+                            RESEARCH PLAN
+════════════════════════════════════════════════════════════════════════════════
+
+# Research Plan: Topological Persistence Analysis of LLM Training Dynamics for Scaling Prediction
+
+## Motivation &amp; Novelty Assessment
+
+### Why This Research Matters
+Training large language models is computationally expensive, costing millions of dollars. A key decision during training is whether to continue training the current model or scale up to a larger model. Currently, this decision relies on simple power-law extrapolation of loss curves, which provides limited insight into the underlying optimization dynamics. Topological data analysis (TDA) can capture structural properties of the optimization landscape that scalar metrics (loss, gradient norm) cannot—such as connectivity, number of basins, and topological complexity. If persistent topological features correlate with scaling efficiency, they could serve as early warning signals for when to scale, potentially saving significant compute.
+
+### Gap in Existing Work
+Based on the literature review:
+1. **No TDA applied to LLM/transformer training dynamics**: Ballester et al. (2024) survey explicitly notes this gap—most TDA-for-NN work uses classical CNNs/FCNNs.
+2. **No connection between topological features and scaling laws**: While TDA metrics correlate with generalization and training progress (Rieck et al. 2019), nobody has studied whether they predict scaling behavior across model sizes.
+3. **Temporal topological analysis is underexplored**: Tracking topological features across training checkpoints (creating &#34;topological time series&#34;) is largely unexplored.
+
+### Our Novel Contribution
+We will: (1) Train multiple small transformer models (1K–50K parameters) from scratch, (2) compute persistent homology on their weight spaces and loss surfaces across training, (3) identify topological signatures that correlate with training efficiency and scale predictably across model sizes, and (4) test whether topological features improve prediction of optimal training-to-scaling transitions.
+
+### Experiment Justification
+- **Experiment 1 (Train small LLMs)**: Needed to generate controlled training trajectories where we know the ground truth scaling behavior. Small models are computationally tractable.
+- **Experiment 2 (Compute TDA features)**: Neural persistence and weight-space persistent homology capture structural complexity of the learned representations—the core measurement.
+- **Experiment 3 (Correlation analysis)**: Tests whether topological features contain information about training efficiency beyond what loss/gradient norms provide.
+- **Experiment 4 (Scaling prediction)**: The main hypothesis test—can TDA features predict when to scale?
+
+## Research Question
+Can persistent topological features extracted from the weight spaces and training trajectories of small transformer language models serve as early predictors of optimal scaling decisions (when to scale model size vs. continue training)?
+
+## Background and Motivation
+Neural scaling laws (Kaplan 2020, Hoffmann 2022) describe how LLM performance scales with compute, but rely on fitting power laws to loss curves. Topological data analysis offers a richer characterization of training dynamics through persistent homology, which tracks how topological features (connected components, loops) persist across filtration scales. Rieck et al. (2019) showed neural persistence correlates with training progress in CNNs, but no one has extended this to transformers or connected it to scaling predictions.
+
+## Hypothesis Decomposition
+1. **H1**: Neural persistence (H_0 of weight graphs) increases monotonically during training and its rate of change correlates with training efficiency.
+2. **H2**: The topological complexity of weight-space point clouds (Betti numbers from Vietoris-Rips filtration) shows distinct phase transitions during training that coincide with diminishing returns on continued training.
+3. **H3**: Topological features extracted from different model sizes follow predictable scaling relationships (e.g., power-law or log-linear).
+4. **H4**: Topological features improve prediction of optimal stopping/scaling points beyond what loss curve extrapolation alone provides.
+
+## Proposed Methodology
+
+### Approach
+Train a family of small GPT-style transformer models (1K, 5K, 10K, 25K, 50K parameters) on a text corpus, saving frequent checkpoints. At each checkpoint, extract: (a) neural persistence per layer, (b) persistent homology of weight-space point clouds, (c) loss and gradient statistics. Analyze temporal evolution, cross-size scaling, and predictive utility.
+
+### Experimental Steps
+
+1. **Data Preparation**: Use Wikitext-2 or a subset of The Pile as training corpus. Tokenize with a simple BPE tokenizer.
+
+2. **Model Training** (GPU-accelerated):
+   - Define 5 GPT-style models: ~1K, 5K, 10K, 25K, 50K parameters
+   - Architecture: decoder-only transformer with varying hidden_dim, n_layers, n_heads
+   - Train each for 10K steps with cosine LR schedule
+   - Save checkpoints every 200 steps (50 checkpoints per model)
+   - Record: loss, gradient norm, learning rate at each step
+
+3. **TDA Feature Extraction** (per checkpoint):
+   - **Neural Persistence**: Per-layer H_0 persistence of weight graphs (Rieck et al. method)
+   - **Weight-Space PH**: Sample weight vectors, compute Vietoris-Rips persistence (H_0, H_1)
+   - **Gradient-Space PH**: PH of gradient vectors at each checkpoint
+   - Use ripser for fast computation
+
+4. **Correlation Analysis**:
+   - Spearman/Pearson correlation between TDA features and training metrics
+   - Phase transition detection via changepoint analysis on topological time series
+   - Cross-size comparison of topological feature trajectories
+
+5. **Scaling Prediction**:
+   - Use TDA features from early training (first 30% of steps) to predict final loss
+   - Compare: TDA features alone, loss-only extrapolation, TDA + loss combined
+   - Evaluate: MAE of predicted final loss, rank correlation across model sizes
+
+### Baselines
+1. **Loss curve extrapolation**: Fit power law L(t) = a*t^(-b) + c to early loss curve, predict final loss
+2. **Gradient norm statistics**: Use mean/std of gradient norms as predictive features
+3. **Weight norm tracking**: L2 norm of weights per layer (non-topological structural metric)
+
+### Evaluation Metrics
+- **Topological**: Neural persistence per layer, total persistence, number of persistence diagram points, Wasserstein/bottleneck distances between consecutive persistence diagrams
+- **Prediction**: MAE of final loss prediction, Spearman rank correlation of predicted vs actual scaling
+- **Correlation**: Spearman ρ between TDA features and training efficiency metrics
+
+### Statistical Analysis Plan
+- Spearman rank correlation with p-values for all feature-metric pairs
+- Bootstrap confidence intervals (1000 samples) for correlation estimates
+- Paired t-tests or Wilcoxon signed-rank for comparing prediction methods
+- Multiple comparison correction (Bonferroni) where applicable
+- Significance level: α = 0.05
+
+## Expected Outcomes
+- **Supporting hypothesis**: TDA features show strong correlation (ρ &gt; 0.7) with training efficiency, exhibit detectable phase transitions, and improve prediction MAE by &gt;10% vs loss-only baseline.
+- **Refuting hypothesis**: TDA features are noisy, show no consistent scaling relationship, or provide no predictive advantage.
+
+## Timeline and Milestones
+| Phase | Time | Milestone |
+|-------|------|-----------|
+| Planning | 10 min | planning.md complete |
+| Environment | 5 min | Packages verified, data loaded |
+| Model Training | 20 min | 5 models trained with checkpoints |
+| TDA Extraction | 15 min | Topological features computed |
+| Analysis | 15 min | Correlations and predictions computed |
+| Visualization | 10 min | Key plots generated |
+| Documentation | 15 min | REPORT.md and README.md written |
+| **Total** | **~90 min** | |
+
+## Potential Challenges
+1. **Computational cost of PH**: Mitigate by subsampling weights and using ripser&#39;s efficient C++ backend.
+2. **Small model regime may not generalize**: Acknowledge as limitation; validate trends on medium models if time allows.
+3. **Noisy topological features**: Use smoothing and aggregation (per-layer means, persistence images).
+4. **Overfitting prediction model**: Use leave-one-model-out cross-validation.
+
+## Success Criteria
+1. At least one TDA feature shows statistically significant correlation (p &lt; 0.05) with training efficiency across model sizes.
+2. Topological feature trajectories show qualitatively different behavior across model sizes.
+3. TDA-augmented predictions outperform loss-only baseline for at least 3/5 model sizes.
+
+
+════════════════════════════════════════════════════════════════════════════════
+                          LITERATURE REVIEW
+════════════════════════════════════════════════════════════════════════════════
+
+# Literature Review: Topological Persistence Analysis of LLM Training Dynamics for Scaling Prediction
+
+## Research Area Overview
+
+This research investigates whether persistent topological features in the loss landscapes and parameter evolution trajectories of small, efficiently trained LLMs can serve as early predictors of scaling decisions -- specifically, when to scale model size versus continue training. The project sits at the intersection of three active research areas: (1) topological data analysis (TDA) applied to neural networks, (2) neural scaling laws and compute-optimal training, and (3) LLM training dynamics and checkpoint analysis.
+
+---
+
+## Key Papers
+
+### Category 1: TDA Applied to Loss Landscapes and Neural Network Structure
+
+#### Paper 1: Neural Persistence (Rieck et al., ICLR 2019)
+- **Authors**: Bastian Rieck, Matteo Togninalli, Christian Bock, Michael Moor, Max Horn, Thomas Gumbsch, Karsten Borgwardt
+- **Source**: ICLR 2019 (arXiv:1812.09764)
+- **Key Contribution**: Introduced &#34;neural persistence&#34; -- a structural complexity measure for neural networks based on persistent homology of the weight graph. Proposed a weight-based filtration on the network&#39;s stratified graph (sorting by descending absolute weight) and computing 0-dimensional persistence diagrams per layer.
+- **Methodology**: Represents NN as bipartite graph per layer, constructs descending filtration from weight magnitudes, computes H_0 persistent homology via union-find (nearly linear time).
+- **Datasets Used**: MNIST, Fashion-MNIST, CIFAR-10, IMDB
+- **Results**: Neural persistence increases during training; correlates with regularization quality (dropout &gt; batch norm &gt; none); enables data-free early stopping that saves 0.5-1.7 epochs with minimal accuracy loss.
+- **Code Available**: Yes -- https://github.com/BorgwardtLab/Neural-Persistence
+- **Relevance**: Foundational method for our project. Neural persistence can be computed on transformer linear layers. Key insight: focus on NP *dynamics* (rate of change) rather than absolute values.
+
+#### Paper 2: Evaluating Loss Landscapes from a Topology Perspective (Xie et al., NeurIPS Workshop 2024)
+- **Authors**: Tiankai Xie, Caleb Geniesse, Jiaqing Chen, Yaoqing Yang, Dmitriy Morozov, Michael Mahoney, Ross Maciejewski, Gunther Weber
+- **Source**: NeurIPS 2024 Workshop (arXiv:2411.09807)
+- **Key Contribution**: Pipeline for quantifying loss landscape topology using merge trees and persistence diagrams. Showed correlations between topological metrics (saddle point count, average persistence) and ML performance metrics (accuracy, Hessian eigenvalues).
+- **Methodology**: Projects loss landscape into 2D subspace (random or Hessian-based), computes merge tree and 0-dim persistence diagram using Topology ToolKit (TTK). Prefers AkNN graph (k=8) for scalability.
+- **Datasets Used**: CIFAR-10 (ResNet-20), 1D convection PDE (PINNs)
+- **Results**: More saddle points = worse performance; higher average persistence = simpler landscape = better performance (context-dependent). Residual connections dramatically simplify loss landscape topology.
+- **Code Available**: No explicit repo, but uses open tools (TTK, PyHessian)
+- **Relevance**: Directly transferable pipeline. Track merge tree / persistence metrics across training checkpoints to detect phase transitions. Adapt for LLM loss landscapes using Hessian-based subspace construction.
+
+#### Paper 3: Visualizing Loss Functions as Topological Landscape Profiles (Geniesse et al., 2024)
+- **Authors**: Caleb Geniesse et al.
+- **Source**: arXiv:2411.12136 (Nov 2024)
+- **Key Contribution**: Higher-dimensional visualization of loss landscapes using TDA. Constructs filtrations along optimization trajectories to capture multi-scale topological features as &#34;landscape profiles.&#34;
+- **Methodology**: Samples points along optimization trajectories, builds filtrations at different scales, transforms persistence diagrams into interpretable landscape profiles.
+- **Results**: Topological landscape profiles reveal structure invisible in standard 2D projections; complexity is greater near performance transitions.
+- **Relevance**: The trajectory-based sampling approach is directly applicable to analyzing optimization paths during LLM training.
+
+#### Paper 4: A Topological Description of Loss Surfaces Based on Betti Numbers (Ballarin et al., 2024)
+- **Authors**: Ballarin et al.
+- **Source**: Neural Networks (ScienceDirect), 2024 (arXiv:2401.00358)
+- **Key Contribution**: Derives theoretical upper and lower bounds for Betti numbers of loss surfaces in multilayer NNs. Compares topological complexity of deep vs. shallow architectures.
+- **Methodology**: Analytical derivation of Betti number bounds for loss surfaces as functions of network depth, width, activation function, and training data shape.
+- **Results**: Loss surface complexity increases with depth and number of hidden units; sigmoidal activations lead to quantifiable complexity differences between deep and shallow nets.
+- **Relevance**: Provides theoretical grounding for how topological complexity scales with model size -- directly relevant to predicting scaling behavior.
+
+#### Paper 5: TDA for Neural Network Analysis: A Comprehensive Survey (Ballester et al., 2024)
+- **Authors**: Rubén Ballester, Carles Casacuberta, Sergio Escalera
+- **Source**: arXiv:2312.05840 (Jan 2024)
+- **Key Contribution**: Comprehensive survey organizing TDA-for-NN work into four categories: (1) network structure, (2) decision regions/boundaries, (3) internal representations/activations, (4) training dynamics and loss functions.
+- **Key Findings from Section 3.4 (Training Dynamics)**:
+  - Loss function connectivity: sublevel set topology determines optimization feasibility (Nguyen 2019)
+  - Fractal dimension of weight trajectories via persistent homology correlates with generalization (Birdal et al. 2021)
+  - dimPH(Θ) = dimBox(Θ) -- persistent homology dimension equals box-counting fractal dimension
+  - Generalization bound: gap ≤ O(√(dimPH * log²(mL²) / m))
+- **Key Gap Identified**: Most experiments use classical CNNs/FCNNs, NOT transformers or LLMs. Extension to modern architectures is a critical open problem.
+- **Relevance**: Confirms the novelty of applying TDA to LLM training dynamics. The Birdal et al. (2021) connection between persistent homology dimension of weight trajectories and generalization is directly applicable.
+
+#### Paper 6: Visualizing the Loss Landscape of Neural Nets (Li et al., NeurIPS 2018)
+- **Authors**: Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, Tom Goldstein
+- **Source**: NeurIPS 2018 (arXiv:1712.09913)
+- **Key Contribution**: Foundational work on filter-normalized loss landscape visualization. Showed skip connections produce dramatically smoother loss landscapes.
+- **Methodology**: Random direction perturbation with filter normalization for fair comparison across architectures.
+- **Code Available**: Yes -- https://github.com/tomgoldstein/loss-landscape
+- **Relevance**: Standard method for generating the 2D loss landscape projections that TDA methods analyze.
+
+#### Paper 7: Exploring the Geometry and Topology of Neural Network Loss Landscapes (Horoi et al., 2021)
+- **Authors**: Horoi, Huang, Rieck, Lajoie, Wolf, Krishnaswamy
+- **Source**: arXiv:2102.00485
+- **Key Contribution**: &#34;Jump and retrain&#34; procedure for sampling loss landscape. Combined PHATE trajectory visualization with computational homology to quantify differences between generalizing and non-generalizing networks.
+- **Relevance**: The trajectory-based approach to sampling loss landscapes is more informative than random projections and could be adapted for LLM checkpoint analysis.
+
+### Category 2: Neural Scaling Laws and Training Dynamics
+
+#### Paper 8: Scaling Laws for Neural Language Models (Kaplan et al., 2020)
+- **Authors**: Jared Kaplan et al. (OpenAI)
+- **Source**: arXiv:2001.08361
+- **Key Contribution**: Established that LM performance scales as power laws with model size, dataset size, and compute. Showed smooth, predictable scaling across many orders of magnitude.
+- **Relevance**: The baseline scaling law framework that our topological analysis aims to improve upon.
+
+#### Paper 9: Training Compute-Optimal Large Language Models [Chinchilla] (Hoffmann et al., 2022)
+- **Authors**: Jordan Hoffmann et al. (DeepMind)
+- **Source**: arXiv:2203.15556
+- **Key Contribution**: Showed previous LLMs were significantly undertrained. Derived optimal allocation between model size and training tokens for a given compute budget.
+- **Results**: For compute-optimal training, model size and training tokens should scale roughly equally.
+- **Relevance**: The scaling prediction problem our topological analysis addresses -- can TDA metrics predict when to scale vs. continue training?
+
+#### Paper 10: A Dynamical Model of Neural Scaling Laws (Bordelon et al., 2024)
+- **Authors**: Blake Bordelon, Alexander Atanasov, Cengiz Pehlevan
+- **Source**: arXiv:2402.01092
+- **Key Contribution**: Provides a theoretical dynamical model explaining scaling laws via random feature model + gradient descent analysis. Predicts asymmetric compute-optimal scaling: training steps should increase faster than model parameters.
+- **Methodology**: Analyzes feature learning dynamics through eigenspectrum decomposition; different modes of the model are learned at different rates.
+- **Key Predictions**: Power law exponents for performance vs. training time differ from those for performance vs. model size; asymmetric allocation is optimal.
+- **Relevance**: The dynamical model&#39;s prediction of different learning phases (fast modes learned first, slow modes later) could produce detectable topological signatures.
+
+#### Paper 11: Scaling Laws and Compute-Optimal Training Beyond Fixed Training Durations (Porian et al., NeurIPS 2024)
+- **Authors**: Porian et al.
+- **Source**: NeurIPS 2024 (arXiv:2405.18392)
+- **Key Contribution**: Extends scaling laws to handle learning rate schedules and variable training durations. Validated at 1B and 8B parameter scales.
+- **Relevance**: Practical framework for understanding how LR schedules affect scaling, which interacts with loss landscape topology.
+
+#### Paper 12: LLMs on the Line: Data Determines Loss-to-Loss Scaling Laws (Gadre et al., 2025)
+- **Authors**: Gadre et al.
+- **Source**: arXiv:2502.12120
+- **Key Contribution**: Studies loss-to-loss scaling curves across &gt;6000 checkpoints. Shows pretraining data has the most substantial impact on scaling laws; intermediate checkpoints are valuable for fitting.
+- **Relevance**: Demonstrates that intermediate training checkpoints contain rich scaling information -- exactly what we aim to enrich with topological features.
+
+#### Paper 13: Multi-Power Law for Loss Curve Prediction (Luo et al., 2025)
+- **Authors**: Luo et al. (Tsinghua)
+- **Source**: arXiv:2501.02751
+- **Key Contribution**: Proposes multi-power law (MPL) framework for predicting training loss curves including learning rate decay effects.
+- **Relevance**: Loss curve prediction is the downstream task our topological features aim to improve.
+
+#### Paper 14: Scaling Laws for Downstream Task Performance (Isik et al., 2024)
+- **Authors**: Isik et al.
+- **Source**: arXiv:2402.04177
+- **Key Contribution**: Two-stage prediction framework: FLOPs → loss → downstream performance. Achieves 5-10% error margins for 7B/13B models using only ≤3B sampling models.
+- **Relevance**: The two-stage prediction framework could be augmented with topological features for improved accuracy.
+
+### Category 3: TDA Tools and Methods
+
+#### Paper 15: giotto-tda (Tauzin et al., JMLR 2021)
+- **Authors**: Tauzin et al.
+- **Source**: JMLR 2021 (arXiv:2004.02551)
+- **Key Contribution**: Scikit-learn compatible Python library for TDA with high-performance C++ backend. Provides VietorisRipsPersistence, persistence diagrams, persistence images, and landscapes.
+- **Code Available**: Yes -- https://github.com/giotto-ai/giotto-tda
+- **Relevance**: Primary computational tool for our persistent homology calculations.
+
+#### Paper 16: On the Expressivity of Persistent Homology in Graph Learning (Horn et al., 2023)
+- **Authors**: Horn et al.
+- **Source**: arXiv:2302.09826
+- **Key Contribution**: Studies what persistent homology can and cannot capture in graph classification, establishing theoretical expressivity results.
+- **Relevance**: Provides theoretical understanding of PH&#39;s capabilities when applied to neural network weight graphs.
+
+---
+
+## Common Methodologies
+
+### TDA Methods Applied to Neural Networks
+- **Persistent Homology (H_0)**: Connected component tracking via weight-based or distance-based filtrations. Used in Rieck et al. (2019), Xie et al. (2024).
+- **Merge Trees**: Track sublevel set component merges. Used in Xie et al. (2024).
+- **Persistence Diagrams**: Summarize birth/death of topological features. Universal across all TDA papers.
+- **Persistent Homology Dimension**: Links fractal dimension to PH, connecting to generalization bounds. Used in Birdal et al. (2021).
+- **Representation Topology Divergence (RTD)**: Compares VR filtrations across different representations. Used in Barannikov et al. (2022).
+
+### Loss Landscape Analysis Pipeline
+1. Define 2D subspace (random or Hessian-based directions)
+2. Evaluate loss at grid points in subspace
+3. Construct graph representation (AkNN, Delaunay, etc.)
+4. Compute topological invariants (merge tree, persistence diagram)
+5. Extract summary statistics (saddle count, average persistence, total persistence)
+6. Correlate with ML performance metrics
+
+### Scaling Law Fitting
+- Power law regression: L(C) = αC^(-β) + L∞
+- Two-stage prediction: compute → loss → downstream performance
+- Key variables: model parameters N, training tokens D, compute C = 6ND
+
+---
+
+## Standard Baselines
+
+For our experiments, the literature suggests these baselines:
+1. **Raw loss curve extrapolation**: Fit power law to loss curve, predict future loss
+2. **Chinchilla-style scaling**: Predict optimal allocation from compute budget alone
+3. **Multi-power law (MPL)**: Loss curve prediction with LR schedule awareness
+4. **Gradient norm / Hessian-based metrics**: Track curvature without topological analysis
+5. **Weight norm statistics**: Simple weight magnitude statistics (p-norms) without PH
+
+---
+
+## Evaluation Metrics
+
+### Topological Metrics (from Literature)
+- **Number of saddle points** (from merge tree)
+- **Average persistence** (mean distance from diagonal in persistence diagram)
+- **Total persistence** (sum of all persistence values, the p-norm)
+- **Neural persistence** (normalized total persistence per layer)
+- **Persistent homology dimension** (fractal dimension via PH)
+- **Number of persistence diagram points** (topological feature count)
+
+### ML Performance Metrics
+- **Validation loss** (perplexity for LLMs)
+- **Downstream task accuracy** (MMLU, HellaSwag, etc.)
+- **Top-k Hessian eigenvalues** (sharpness)
+- **Hessian trace** (total curvature)
+
+### Scaling Prediction Metrics
+- **Mean absolute error** of loss prediction at future checkpoints
+- **Rank correlation** between predicted and actual scaling curves
+- **Compute savings** achieved by early stopping based on topological signals
+
+---
+
+## Datasets in the Literature
+
+### For TDA Experiments
+- MNIST, Fashion-MNIST, CIFAR-10, CIFAR-100 (standard benchmarks)
+- IMDB sentiment (NLP baseline)
+- 1D convection PDE (PINNs)
+
+### For Scaling Law Studies
+- The Pile / Pile-deduped (Pythia training data)
+- Dolma (OLMo training data)
+- C4, RedPajama (common LLM training corpora)
+
+### For Our Experiments (Recommended)
+- **Pythia checkpoints** (EleutherAI): 8 model sizes (14M to 12B), 154 checkpoints each, all trained on same data in same order. Ideal for controlled scaling analysis.
+- **OLMo checkpoints** (AI2): Fully open models with training code, data, and intermediate checkpoints.
+
+---
+
+## Gaps and Opportunities
+
+1. **No prior work applies TDA to LLM/transformer training dynamics**: The survey by Ballester et al. (2024) explicitly identifies this as a critical gap -- most TDA-for-NN work uses classical CNNs/FCNNs.
+
+2. **No connection between topological features and scaling laws**: While TDA metrics correlate with generalization and training progress, no one has studied whether they predict scaling behavior across model sizes.
+
+3. **Computational scalability**: Persistent homology is expensive for large networks. However, per-layer analysis (as in neural persistence) is tractable since individual layers have O(10^4-10^6) weights even in large LLMs.
+
+4. **Temporal topological analysis**: Tracking topological features across training checkpoints (creating a &#34;topological time series&#34;) is largely unexplored, with only Rieck et al. (2019) and Muller et al. (2024) touching on this.
+
+5. **Higher-dimensional homology**: Nearly all work uses only H_0 (connected components). H_1 (loops/cycles in the loss landscape or weight graph) could capture richer structural information relevant to scaling.
+
+---
+
+## Recommendations for Our Experiment
+
+### Recommended Datasets
+1. **Primary: Pythia model suite** (14M, 70M, 160M, 410M, 1B, 1.4B checkpoints) -- controlled scaling, 154 checkpoints each
+2. **Validation: OLMo checkpoints** -- independent confirmation with different architecture/data
+3. **Synthetic: Generated loss curves** -- for method development and sanity checks
+
+### Recommended Baselines
+1. Raw loss curve power-law extrapolation
+2. Weight norm statistics (non-topological baseline)
+3. Hessian eigenvalue tracking (geometry without topology)
+4. Chinchilla-style compute-optimal predictions
+
+### Recommended Metrics
+1. Neural persistence (per-layer, normalized)
+2. Merge tree statistics (saddle count, average persistence)
+3. Persistent homology dimension of weight trajectories
+4. Correlation with downstream task performance at each checkpoint
+
+### Methodological Considerations
+- Use **Hessian-based subspace** construction for loss landscape analysis (more informative than random)
+- Compute TDA metrics **per-layer** to maintain tractability at LLM scale
+- Track **temporal evolution** of topological features, not just static snapshots
+- Use **giotto-tda** and **ripser** for persistent homology computation
+- Use **PyHessian** for Hessian computation (supports stochastic approximation)
+- Compare topological features across **at least 3 model sizes** to identify scaling trends
+
+
+════════════════════════════════════════════════════════════════════════════════
+                          PAPER REQUIREMENTS
+════════════════════════════════════════════════════════════════════════════════
+
+Generate a complete academic paper with the following structure:
+
+1. TITLE
+   - Clear, specific, informative
+   - Should convey main finding or contribution
+
+2. ABSTRACT (150-250 words)
+   - Problem statement
+   - Approach
+   - Key results
+   - Significance
+
+3. INTRODUCTION
+   - Research problem and motivation
+   - Gap in existing work
+   - Our contribution (be specific)
+   - Paper organization
+
+4. RELATED WORK
+   - Organized by theme/approach
+   - Position our work relative to prior work
+   - Cite papers from literature review
+
+5. METHODOLOGY
+   - Clear description of approach
+   - Experimental setup
+   - Datasets used
+   - Evaluation metrics
+   - Baselines
+
+6. RESULTS
+   - Present results with tables and figures
+   - Statistical analysis
+   - Comparison to baselines
+   - Ablation studies (if applicable)
+
+7. DISCUSSION
+   - Interpretation of results
+   - Limitations
+   - Broader implications
+
+8. CONCLUSION
+   - Summary of contributions
+   - Key findings
+   - Future work
+
+9. REFERENCES
+   - BibTeX format
+   - All cited papers
+
+════════════════════════════════════════════════════════════════════════════════
+                          OUTPUT FORMAT
+════════════════════════════════════════════════════════════════════════════════
+
+Create a MODULAR LaTeX project with the following directory structure:
+
+paper_draft/
+├── main.tex              # Main file that imports all sections
+├── references.bib        # BibTeX references
+├── sections/
+│   ├── abstract.tex      # Abstract content
+│   ├── introduction.tex  # Introduction section
+│   ├── related_work.tex  # Related work section
+│   ├── methodology.tex   # Methodology section
+│   ├── results.tex       # Results section
+│   ├── discussion.tex    # Discussion section
+│   └── conclusion.tex    # Conclusion section
+├── figures/              # Directory for any generated figures
+├── tables/               # Directory for complex standalone tables
+└── appendix/             # Directory for appendix sections (if needed)
+
+INSTRUCTIONS:
+1. First, create the directory structure above (mkdir -p paper_draft/sections paper_draft/figures paper_draft/tables paper_draft/appendix)
+2. Write main.tex using the EXACT preamble for NEURIPS:
+
+   \documentclass{article}
+   \usepackage[final]{neurips_2025}  % NEURIPS style (neurips_2025.sty is in paper_draft/)
+   \usepackage[hidelinks]{hyperref}  % REQUIRED: clickable links
+   \usepackage{booktabs}  % REQUIRED: professional tables
+   \usepackage{graphicx}
+   \usepackage{amsmath,amssymb}
+
+   % Import command files
+   \input{commands/math}
+   \input{commands/general}
+   \input{commands/macros}
+
+   % Use this bibliography style:
+   \bibliographystyle{plainnat}
+
+   - Use \input{sections/...} to include each section
+   - Use \bibliography{references} for references
+3. Write each section file with COMPLETE content (no placeholders)
+4. Each section file should include its \section{} command
+5. Write references.bib with all citations in BibTeX format
+6. After writing all files, compile the paper:
+   cd paper_draft && pdflatex -interaction=nonstopmode main.tex && bibtex main && pdflatex -interaction=nonstopmode main.tex && pdflatex -interaction=nonstopmode main.tex
+
+This modular structure allows humans to easily:
+- Edit individual sections without navigating a large file
+- Track changes per section
+- Reuse sections across different paper versions
+
+════════════════════════════════════════════════════════════════════════════════
+                          QUALITY REQUIREMENTS
+════════════════════════════════════════════════════════════════════════════════
+
+- Academic tone throughout
+- All claims must be supported by data from the experiment report
+- Proper citations using \cite{} commands
+- Clear figures and tables with proper captions
+- NO placeholder text - every section must have real content
+- The paper MUST compile without errors
+- If compilation fails, debug and fix the LaTeX errors
+
+════════════════════════════════════════════════════════════════════════════════
+                          LAB WRITING STYLE
+════════════════════════════════════════════════════════════════════════════════
+
+Follow these lab-specific conventions to match our paper style:
+
+1. LANGUAGE STYLE:
+   - Use active voice: "We propose", "We examine", "We focus on"
+   - Be direct and confident: "Our main question is...", "We hypothesize that..."
+   - State things clearly and simply - prefer plain language over jargon
+   - Use bold questions as paragraph organizers: {\bf what is X?}
+   - Include specific quantitative claims: "8.97% over baseline"
+   - Avoid fancy wording: "utilize" → "use", "facilitate" → "help"
+
+2. INTRODUCTION STRUCTURE:
+   - Engaging hook (get to the point quickly)
+   - Problem importance
+   - Gap identification
+   - Your approach with method figure reference
+   - Quantitative preview of results
+   - Contribution bullets (3-4 items, action verbs)
+
+3. CONTRIBUTION LISTS:
+   \begin{itemize}[leftmargin=*,itemsep=0pt,topsep=0pt]
+       \item We propose...
+       \item We conduct...
+       \item We complement...
+   \end{itemize}
+
+4. MODULAR COMMANDS STRUCTURE:
+   Create paper_draft/commands/ directory with:
+   - math.tex: Math notation macros (copy from templates/paper_writing/commands/)
+   - general.tex: Formatting macros (copy from templates/paper_writing/commands/)
+   - macros.tex: Project-specific term definitions
+
+   In main.tex, include:
+   \input{commands/math}
+   \input{commands/general}
+   \input{commands/macros}
+
+5. REFERENCE CONVENTIONS:
+   Use reference macros from math.tex:
+   - \figref{fig:name} for "figure 1" (lowercase, in-sentence)
+   - \Figref{fig:name} for "Figure 1" (capitalized, start of sentence)
+   - \secref{sec:name} for "section 2"
+
+6. TEXT FORMATTING:
+   - Use \para{Header text} for bold paragraph headers
+   - Define method/dataset names with \textsc and \xspace:
+     \newcommand{\methodname}{\textsc{MethodName}\xspace}
+
+7. TABLE FORMATTING:
+   - Use booktabs package (no vertical lines)
+   - Use \resizebox{\textwidth}{!}{...} for wide tables
+   - Use @{} to remove padding at table edges
+   - Use \cmidrule(lr){x-y} for sub-headers
+   - Use \textsc{} for dataset/method names in headers
+   - Bold best results with {\bf ...}
+
+8. FIGURE FORMATTING:
+   - Use 0.32\textwidth for 3-column subfigures
+   - Use 0.95\linewidth for full-width figures
+   - Use \input{figures/legend} for shared legends
+   - Write self-contained captions explaining key observations
+
+9. RESULTS PRESENTATION:
+   - Define \increase and \decrease for colored arrows (green up, red down)
+   - Bold best results in tables
+   - Report confidence intervals when available
+
+10. ALGORITHM STYLING:
+    - Use algpseudocode with [noend]
+    - Use \triangleright for comments
+
+11. HYPERLINKS (REQUIRED):
+    - Always use \usepackage[hidelinks]{hyperref} or with colored links
+    - All citations, section refs, figure refs, table refs must be clickable
+    - This is essential for reader navigation
+
+════════════════════════════════════════════════════════════════════════════════
+                          WORKFLOW: REVIEW AND REFLECT
+════════════════════════════════════════════════════════════════════════════════
+
+Before calling finish, you MUST complete these review steps:
+
+1. REVIEW RESOURCES (at the start):
+   - Read templates/skills/paper-writer/SKILL.md for detailed guidance
+   - Study templates/paper_writing/lab_style_guide.md for style conventions
+   - Browse paper_examples/ for formatting and language patterns
+
+2. SELF-REFLECTION (before finishing):
+   After writing all sections, review your work against these criteria:
+
+   LANGUAGE CHECK:
+   - [ ] Is the writing clear and jargon-free?
+   - [ ] Are claims specific with quantitative support?
+   - [ ] Is active voice used throughout?
+
+   FORMATTING CHECK:
+   - [ ] Does main.tex include \input{commands/math}, \input{commands/general}, \input{commands/macros}?
+   - [ ] Is hyperref package included for clickable references?
+   - [ ] Do tables use booktabs (no vertical lines)?
+   - [ ] Are best results bolded in tables?
+   - [ ] Are figures/tables properly captioned?
+
+   STRUCTURE CHECK:
+   - [ ] Does introduction follow: hook → importance → gap → approach → preview → contributions?
+   - [ ] Are contribution bullets specific with action verbs?
+   - [ ] Does the paper compile without errors?
+
+3. FIX ISSUES:
+   - Address any issues found in the self-reflection
+   - Re-compile and verify the PDF looks correct
+
+Only after completing this review should you consider the paper finished.

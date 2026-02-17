@@ -1,0 +1,32 @@
+\section{Introduction}
+\label{sec:introduction}
+
+The cost of training a large language model is dominated by a single resource: compute.
+A single GPT-4-class training run can cost tens of millions of dollars~\citep{kaplan2020scaling}, and the central question facing practitioners is \emph{when to stop training the current model and invest in scaling up}.
+Neural scaling laws~\citep{kaplan2020scaling, hoffmann2022training} provide power-law relationships between model size, dataset size, and loss, but fitting these laws requires extensive pilot runs, and the predictions are based solely on a scalar loss trajectory.
+If the geometry of the weight space itself encodes information about training progress and efficiency, we might detect signals that loss alone cannot provide.
+
+\para{Can topology see what loss cannot?}
+Persistent homology~\citep{edelsbrunner2002topological, carlsson2009topology} provides a multiscale summary of the shape of data.
+Applied to neural network weights, it can detect when clusters of neurons merge, when the weight-space point cloud develops loops, and when the overall connectivity structure of the network stabilizes.
+\citet{rieck2019neural} showed that \emph{neural persistence}---the $\Hzero$ persistent homology of the weight graph---increases during CNN training and correlates with generalization.
+However, no prior work has applied persistent homology to \emph{transformer} training dynamics or connected topological features to \emph{scaling predictions}.
+The comprehensive survey by \citet{ballester2024tda} explicitly identifies this as a critical gap: most TDA-for-neural-network work uses classical CNNs or fully-connected networks, not transformers.
+
+\para{Our approach.}
+We train a family of five GPT-style transformer language models spanning 2.9K to 97K parameters on \wikitext, saving 51 checkpoints per model.
+At each checkpoint, we compute two classes of topological features: (1) neural persistence of the per-layer weight graph using the descending absolute-weight filtration of \citet{rieck2019neural}, and (2) Vietoris-Rips persistent homology ($\Hzero$ and $\Hone$) of the weight-space point cloud, treating neuron weight vectors as points in $\sR^d$.
+We then analyze how these features evolve during training, how they correlate with loss, and whether they improve scaling predictions when combined with loss curve extrapolation (\figref{fig:summary}).
+
+\para{Key results.}
+$\Hzero$ total persistence from VR filtration is strongly anticorrelated with training loss (Spearman $\rho$ from $-0.59$ to $-0.91$, all $p < 10^{-5}$), and the correlation \emph{strengthens monotonically with model size}---precisely the regime where better signals are most valuable.
+Combined with loss extrapolation, TDA features reduce final loss prediction error by 10--29\% when using 30--50\% of training data.
+We validate these trends on \pythia-14m~\citep{biderman2023pythia}, confirming they hold in real large-scale training.
+
+We make the following contributions:
+\begin{itemize}[leftmargin=*,itemsep=0pt,topsep=0pt]
+    \item We provide the first systematic study of persistent homology applied to transformer weight spaces during training, computing both neural persistence and Vietoris-Rips homology across 255 checkpoints from five model sizes.
+    \item We show that $\Hzero$ total persistence is a robust training progress indicator whose correlation with loss strengthens monotonically with model size ($|\rho|$ from 0.59 to 0.91).
+    \item We demonstrate that topological features improve scaling predictions by 10--29\% over loss-only baselines when using 30--50\% of training data, and identify topological phase transitions that signal diminishing returns from continued training.
+    \item We validate our findings on \pythia-14m, confirming that the same topological trends observed in small controlled models hold in a 14M-parameter transformer trained on The Pile.
+\end{itemize}

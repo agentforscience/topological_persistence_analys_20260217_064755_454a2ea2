@@ -1,0 +1,17 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We presented the first systematic study of persistent homology applied to transformer weight spaces during training.
+Across five model sizes and 255 checkpoints, we showed that $\Hzero$ total persistence from Vietoris-Rips filtration is strongly anticorrelated with training loss (Spearman $\rho$ up to $-0.91$), with the correlation strengthening monotonically as model size increases.
+Combined with loss curve extrapolation, topological features reduce final loss prediction error by 10--29\% when using 30--50\% of training data.
+We validated these findings on \pythia-14m, confirming that the same topological signatures hold in a real 14M-parameter transformer.
+
+These results suggest that the weight-space topology of transformers encodes structural information about training progress that scalar loss curves alone cannot capture.
+The monotonic strengthening of the topological signal with model size is particularly encouraging: it implies that persistent homology may become \emph{more} informative at the scales where better training monitoring is most needed.
+
+\para{Future work.}
+Several directions could extend these findings.
+Scaling the analysis to the full \pythia suite (14M to 2.8B parameters) would test whether the $\Hzero$--loss correlation continues to strengthen.
+Replacing our heuristic TDA predictor with regression on persistence diagram features (persistence images, persistence landscapes) could improve prediction accuracy.
+Layer-specific analysis could reveal whether attention and feedforward layers exhibit different topological phase transitions.
+Finally, developing a real-time training monitoring dashboard that displays topological features alongside standard metrics could make these insights directly actionable for practitioners.

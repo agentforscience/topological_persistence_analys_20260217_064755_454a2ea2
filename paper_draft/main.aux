@@ -1,0 +1,152 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{kaplan2020scaling}
+\citation{kaplan2020scaling,hoffmann2022training}
+\citation{edelsbrunner2002topological,carlsson2009topology}
+\citation{rieck2019neural}
+\citation{ballester2024tda}
+\citation{rieck2019neural}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\newlabel{sec:introduction}{{1}{1}{Introduction}{section.1}{}}
+\citation{biderman2023pythia}
+\citation{rieck2019neural}
+\citation{birdal2021intrinsic}
+\citation{li2018visualizing}
+\citation{xie2024evaluating}
+\citation{geniesse2024visualizing}
+\citation{ballarin2024topological}
+\citation{horoi2021exploring}
+\citation{ballester2024tda}
+\citation{kaplan2020scaling}
+\citation{hoffmann2022training}
+\citation{bordelon2024dynamical}
+\citation{porian2024scaling}
+\citation{gadre2025llms}
+\citation{luo2025multipower}
+\citation{isik2024scaling}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{2}{section.2}\protected@file@percent }
+\newlabel{sec:related_work}{{2}{2}{Related Work}{section.2}{}}
+\citation{biderman2023pythia}
+\citation{li2018visualizing}
+\citation{biderman2023pythia}
+\citation{rieck2019neural}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Model configurations. All models are decoder-only transformers with character-level tokenization (vocab size 128, context length 128). Final loss is cross-entropy on the \textsc  {Wikitext-2}\xspace  validation set.\relax }}{3}{table.caption.2}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{tab:models}{{1}{3}{Model configurations. All models are decoder-only transformers with character-level tokenization (vocab size 128, context length 128). Final loss is cross-entropy on the \wikitext validation set.\relax }{table.caption.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Methodology}{3}{section.3}\protected@file@percent }
+\newlabel{sec:methodology}{{3}{3}{Methodology}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Model Family and Training}{3}{subsection.3.1}\protected@file@percent }
+\newlabel{sec:models}{{3.1}{3}{Model Family and Training}{subsection.3.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Topological Feature Extraction}{3}{subsection.3.2}\protected@file@percent }
+\newlabel{sec:tda_features}{{3.2}{3}{Topological Feature Extraction}{subsection.3.2}{}}
+\citation{zomorodian2005computing}
+\citation{tralie2018ripser}
+\newlabel{eq:neural_persistence}{{1}{4}{Topological Feature Extraction}{equation.3.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Analysis Pipeline}{4}{subsection.3.3}\protected@file@percent }
+\newlabel{sec:analysis}{{3.3}{4}{Analysis Pipeline}{subsection.3.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Results}{4}{section.4}\protected@file@percent }
+\newlabel{sec:results}{{4}{4}{Results}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Training Loss Follows Expected Scaling}{4}{subsection.4.1}\protected@file@percent }
+\newlabel{sec:loss_scaling}{{4.1}{4}{Training Loss Follows Expected Scaling}{subsection.4.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}$H_0$ Total Persistence Strongly Tracks Loss}{4}{subsection.4.2}\protected@file@percent }
+\newlabel{sec:h0_results}{{4.2}{4}{$\Hzero $ Total Persistence Strongly Tracks Loss}{subsection.4.2}{}}
+\citation{rieck2019neural}
+\citation{hoffmann2022training}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Spearman correlation between $H_0$ total persistence (VR filtration) and training loss across checkpoints, for each model size. The correlation strengthens monotonically with model size. All correlations are statistically significant ($p < 10^{-5}$).\relax }}{5}{table.caption.3}\protected@file@percent }
+\newlabel{tab:h0_correlation}{{2}{5}{Spearman correlation between $\Hzero $ total persistence (VR filtration) and training loss across checkpoints, for each model size. The correlation strengthens monotonically with model size. All correlations are statistically significant ($p < 10^{-5}$).\relax }{table.caption.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Spearman correlation between mean neural persistence and training loss. The sign reverses from negative (small models) to positive (larger models), reflecting a transition from NP tracking weight magnitude concentration to NP tracking weight structure development.\relax }}{5}{table.caption.4}\protected@file@percent }
+\newlabel{tab:np_correlation}{{3}{5}{Spearman correlation between mean neural persistence and training loss. The sign reverses from negative (small models) to positive (larger models), reflecting a transition from NP tracking weight magnitude concentration to NP tracking weight structure development.\relax }{table.caption.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Neural Persistence Shows Size-Dependent Behavior}{5}{subsection.4.3}\protected@file@percent }
+\newlabel{sec:np_results}{{4.3}{5}{Neural Persistence Shows Size-Dependent Behavior}{subsection.4.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}$H_1$ Persistence Weakens with Scale}{5}{subsection.4.4}\protected@file@percent }
+\newlabel{sec:h1_results}{{4.4}{5}{$\Hone $ Persistence Weakens with Scale}{subsection.4.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Topological Features Improve Scaling Predictions}{5}{subsection.4.5}\protected@file@percent }
+\newlabel{sec:prediction}{{4.5}{5}{Topological Features Improve Scaling Predictions}{subsection.4.5}{}}
+\citation{biderman2023pythia}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Spearman correlation between $H_1$ total persistence (loops in VR filtration) and training loss. The correlation weakens with model size, suggesting loop structures are a small-scale phenomenon.\relax }}{6}{table.caption.5}\protected@file@percent }
+\newlabel{tab:h1_correlation}{{4}{6}{Spearman correlation between $\Hone $ total persistence (loops in VR filtration) and training loss. The correlation weakens with model size, suggesting loop structures are a small-scale phenomenon.\relax }{table.caption.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Mean absolute error (MAE) of final loss prediction using early training data. TDA features improve over loss-only extrapolation when $\geq $30\% of training data is available. Best results per row in bold.\relax }}{6}{table.caption.6}\protected@file@percent }
+\newlabel{tab:prediction}{{5}{6}{Mean absolute error (MAE) of final loss prediction using early training data. TDA features improve over loss-only extrapolation when $\geq $30\% of training data is available. Best results per row in bold.\relax }{table.caption.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Phase Transitions Signal Diminishing Returns}{6}{subsection.4.6}\protected@file@percent }
+\newlabel{sec:phase_transitions}{{4.6}{6}{Phase Transitions Signal Diminishing Returns}{subsection.4.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Topological Features Scale with Model Size}{6}{subsection.4.7}\protected@file@percent }
+\newlabel{sec:tda_scaling}{{4.7}{6}{Topological Features Scale with Model Size}{subsection.4.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8}Validation on \textsc  {Pythia}\xspace  -14m}{6}{subsection.4.8}\protected@file@percent }
+\newlabel{sec:pythia}{{4.8}{6}{Validation on \pythia -14m}{subsection.4.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{6}{section.5}\protected@file@percent }
+\newlabel{sec:discussion}{{5}{6}{Discussion}{section.5}{}}
+\citation{rieck2019neural}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Phase transition detection via neural persistence rate of change. Larger models reach diminishing returns later in training, consistent with compute-optimal training principles.\relax }}{7}{table.caption.7}\protected@file@percent }
+\newlabel{tab:phase_transitions}{{6}{7}{Phase transition detection via neural persistence rate of change. Larger models reach diminishing returns later in training, consistent with compute-optimal training principles.\relax }{table.caption.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Power-law scaling of features with model size $N$. $H_0$ total persistence scales significantly with model size, while neural persistence does not.\relax }}{7}{table.caption.8}\protected@file@percent }
+\newlabel{tab:scaling}{{7}{7}{Power-law scaling of features with model size $N$. $\Hzero $ total persistence scales significantly with model size, while neural persistence does not.\relax }{table.caption.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{7}{section.6}\protected@file@percent }
+\newlabel{sec:conclusion}{{6}{7}{Conclusion}{section.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Topological features across \textsc  {Pythia}\xspace  -14m training. Neural persistence increases monotonically ($+88\%$) while $H_0$ total persistence decreases ($-35\%$), confirming trends from our small models.\relax }}{8}{table.caption.9}\protected@file@percent }
+\newlabel{tab:pythia}{{8}{8}{Topological features across \pythia -14m training. Neural persistence increases monotonically ($+88\%$) while $\Hzero $ total persistence decreases ($-35\%$), confirming trends from our small models.\relax }{table.caption.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Overview of main results. {\em  (Top)}{\em  (Left)}: Training loss curves for all five model sizes, showing expected power-law scaling. {\em  (Top)}{\em  (Right)}: Neural persistence evolution during training, with larger models showing higher final NP. {\em  (Bottom)}{\em  (Left)}: $H_0$ total persistence vs.\ training loss, showing the strong anticorrelation that strengthens with model size. {\em  (Bottom)}{\em  (Right)}: Scaling of topological features with model size on a log-log scale.\relax }}{8}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:summary}{{1}{8}{Overview of main results. \figtop \figleft : Training loss curves for all five model sizes, showing expected power-law scaling. \figtop \figright : Neural persistence evolution during training, with larger models showing higher final NP. \figbottom \figleft : $\Hzero $ total persistence vs.\ training loss, showing the strong anticorrelation that strengthens with model size. \figbottom \figright : Scaling of topological features with model size on a log-log scale.\relax }{figure.caption.10}{}}
+\bibstyle{plainnat}
+\bibdata{references}
+\bibcite{ballarin2024topological}{{1}{2024}{{Ballarin et~al.}}{{}}}
+\bibcite{ballester2024tda}{{2}{2024}{{Ballester et~al.}}{{Ballester, Casacuberta, and Escalera}}}
+\bibcite{biderman2023pythia}{{3}{2023}{{Biderman et~al.}}{{Biderman, Schoelkopf, Anthony, Bradley, O'Brien, Hallahan, Khan, Purohit, Prashanth, Raff, et~al.}}}
+\bibcite{birdal2021intrinsic}{{4}{2021}{{Birdal et~al.}}{{Birdal, Lou, Guibas, and Siber}}}
+\bibcite{bordelon2024dynamical}{{5}{2024}{{Bordelon et~al.}}{{Bordelon, Atanasov, and Pehlevan}}}
+\bibcite{carlsson2009topology}{{6}{2009}{{Carlsson}}{{}}}
+\bibcite{edelsbrunner2002topological}{{7}{2002}{{Edelsbrunner et~al.}}{{Edelsbrunner, Letscher, and Zomorodian}}}
+\bibcite{gadre2025llms}{{8}{2025}{{Gadre et~al.}}{{}}}
+\bibcite{geniesse2024visualizing}{{9}{2024}{{Geniesse et~al.}}{{}}}
+\bibcite{hoffmann2022training}{{10}{2022}{{Hoffmann et~al.}}{{Hoffmann, Borgeaud, Mensch, Buchatskaya, Cai, Rutherford, de~Las~Casas, Hendricks, Welbl, Clark, et~al.}}}
+\bibcite{horoi2021exploring}{{11}{2021}{{Horoi et~al.}}{{Horoi, Huang, Rieck, Lajoie, Wolf, and Krishnaswamy}}}
+\bibcite{isik2024scaling}{{12}{2024}{{Isik et~al.}}{{}}}
+\bibcite{kaplan2020scaling}{{13}{2020}{{Kaplan et~al.}}{{Kaplan, McCandlish, Henighan, Brown, Chess, Child, Gray, Radford, Wu, and Amodei}}}
+\bibcite{li2018visualizing}{{14}{2018}{{Li et~al.}}{{Li, Xu, Taylor, Studer, and Goldstein}}}
+\bibcite{luo2025multipower}{{15}{2025}{{Luo et~al.}}{{}}}
+\bibcite{porian2024scaling}{{16}{2024}{{Porian et~al.}}{{}}}
+\bibcite{rieck2019neural}{{17}{2019}{{Rieck et~al.}}{{Rieck, Togninalli, Bock, Moor, Horn, Gumbsch, and Borgwardt}}}
+\bibcite{tauzin2021giotto}{{18}{2021}{{Tauzin et~al.}}{{Tauzin, Lupo, Tunstall, P{\'e}rez, Caorsi, Medina-Mardones, Dassatti, and Hess}}}
+\bibcite{tralie2018ripser}{{19}{2018}{{Tralie et~al.}}{{Tralie, Saul, and Bar-On}}}
+\bibcite{xie2024evaluating}{{20}{2024}{{Xie et~al.}}{{Xie, Geniesse, Chen, Yang, Morozov, Mahoney, Maciejewski, and Weber}}}
+\bibcite{zomorodian2005computing}{{21}{2005}{{Zomorodian and Carlsson}}{{}}}
+\citation{tralie2018ripser}
+\citation{tauzin2021giotto}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Supplementary Material}{11}{appendix.A}\protected@file@percent }
+\newlabel{sec:appendix}{{A}{11}{Supplementary Material}{appendix.A}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Training Configuration Details}{11}{subsection.A.1}\protected@file@percent }
+\newlabel{sec:app_training}{{A.1}{11}{Training Configuration Details}{subsection.A.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Software versions used in all experiments\relax }}{11}{table.caption.12}\protected@file@percent }
+\newlabel{tab:software}{{9}{11}{Software versions used in all experiments\relax }{table.caption.12}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Additional Figures}{11}{subsection.A.2}\protected@file@percent }
+\newlabel{sec:app_figures}{{A.2}{11}{Additional Figures}{subsection.A.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Training loss curves for all five model sizes. All models show monotonically decreasing loss, with larger models achieving lower final loss as expected from neural scaling laws\relax }}{11}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:training_curves}{{2}{11}{Training loss curves for all five model sizes. All models show monotonically decreasing loss, with larger models achieving lower final loss as expected from neural scaling laws\relax }{figure.caption.13}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Neural persistence evolution during training. All models show rapid NP change in early training followed by gradual stabilization. Larger models achieve higher final NP values\relax }}{12}{figure.caption.14}\protected@file@percent }
+\newlabel{fig:np_evolution}{{3}{12}{Neural persistence evolution during training. All models show rapid NP change in early training followed by gradual stabilization. Larger models achieve higher final NP values\relax }{figure.caption.14}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Vietoris-Rips $H_0$ and $H_1$ persistence evolution during training. $H_0$ total persistence increases during training (anticorrelating with loss), while $H_1$ shows more varied behavior across model sizes\relax }}{12}{figure.caption.15}\protected@file@percent }
+\newlabel{fig:vr_evolution}{{4}{12}{Vietoris-Rips $\Hzero $ and $\Hone $ persistence evolution during training. $\Hzero $ total persistence increases during training (anticorrelating with loss), while $\Hone $ shows more varied behavior across model sizes\relax }{figure.caption.15}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Spearman correlation heatmap between all topological features and training loss across model sizes. $H_0$ total persistence shows the most consistent and strongest anticorrelation with loss\relax }}{12}{figure.caption.16}\protected@file@percent }
+\newlabel{fig:correlation_heatmap}{{5}{12}{Spearman correlation heatmap between all topological features and training loss across model sizes. $\Hzero $ total persistence shows the most consistent and strongest anticorrelation with loss\relax }{figure.caption.16}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Comparison of final loss prediction accuracy across methods and training fractions. The combined TDA+loss predictor matches or outperforms loss-only extrapolation for training fractions $\geq $30\%\relax }}{13}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:prediction_comparison}{{6}{13}{Comparison of final loss prediction accuracy across methods and training fractions. The combined TDA+loss predictor matches or outperforms loss-only extrapolation for training fractions $\geq $30\%\relax }{figure.caption.17}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces \textsc  {Pythia}\xspace  -14m validation results. {\em  (Left)}: Neural persistence increases monotonically during training. {\em  (Right)}: $H_0$ total persistence decreases, indicating increasing connectivity of the weight-space point cloud\relax }}{13}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:pythia_validation}{{7}{13}{\pythia -14m validation results. \figleft : Neural persistence increases monotonically during training. \figright : $\Hzero $ total persistence decreases, indicating increasing connectivity of the weight-space point cloud\relax }{figure.caption.18}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Scaling relationships between topological features and model size (log-log scale). $H_0$ total persistence scales as a power law with exponent $+0.204$ ($R^2 = 0.852$)\relax }}{13}{figure.caption.19}\protected@file@percent }
+\newlabel{fig:scaling}{{8}{13}{Scaling relationships between topological features and model size (log-log scale). $\Hzero $ total persistence scales as a power law with exponent $+0.204$ ($R^2 = 0.852$)\relax }{figure.caption.19}{}}
+\gdef \@abspage@last{13}

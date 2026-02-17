@@ -1,0 +1,29 @@
+\section{Related Work}
+\label{sec:related_work}
+
+\para{Topological data analysis for neural networks.}
+Persistent homology has been applied to neural networks along several axes.
+\citet{rieck2019neural} introduced neural persistence, a complexity measure based on $\Hzero$ persistent homology of the weight graph, showing it increases during training and correlates with regularization quality in CNNs and fully-connected networks.
+\citet{birdal2021intrinsic} connected the persistent homology dimension of weight trajectories to generalization bounds, establishing that $\dim_{\mathrm{PH}}(\Theta) = \dim_{\mathrm{Box}}(\Theta)$.
+On the loss landscape side, \citet{li2018visualizing} introduced filter-normalized visualization of loss surfaces, while \citet{xie2024evaluating} proposed a pipeline for quantifying loss landscape topology via merge trees and persistence diagrams, finding that more saddle points correlate with worse performance.
+\citet{geniesse2024visualizing} extended this to higher-dimensional landscape profiles along optimization trajectories.
+\citet{ballarin2024topological} derived theoretical bounds on Betti numbers of loss surfaces as functions of network depth and width.
+\citet{horoi2021exploring} combined PHATE trajectory visualization with computational homology to distinguish generalizing from non-generalizing networks.
+The comprehensive survey by \citet{ballester2024tda} organizes this body of work and identifies a key gap: nearly all experiments use classical CNNs or fully-connected networks, not transformers.
+Our work addresses this gap by applying both neural persistence and Vietoris-Rips homology to transformer weight spaces during training.
+
+\para{Neural scaling laws.}
+\citet{kaplan2020scaling} established that language model performance scales as power laws with model size, dataset size, and compute budget, enabling predictions across orders of magnitude.
+\citet{hoffmann2022training} revised these laws with the Chinchilla finding: prior large models were significantly undertrained, and compute-optimal training requires roughly equal scaling of model size and training tokens.
+\citet{bordelon2024dynamical} provided a theoretical dynamical model explaining scaling laws via eigenspectrum decomposition, predicting that different modes of the model are learned at different rates---a property that could produce detectable topological signatures.
+\citet{porian2024scaling} extended scaling laws to handle variable learning rate schedules, validating at 1B and 8B parameter scales.
+Recent work by \citet{gadre2025llms} studied loss-to-loss scaling across 6,000+ checkpoints, finding that pretraining data has the largest impact on scaling behavior, while \citet{luo2025multipower} proposed multi-power law frameworks for loss curve prediction.
+\citet{isik2024scaling} introduced a two-stage framework predicting FLOPs $\to$ loss $\to$ downstream performance.
+All of these approaches rely on scalar loss or compute metrics.
+Our work is complementary: we ask whether \emph{structural} features of the weight space provide signals beyond what scalar loss trajectories capture.
+
+\para{Training dynamics and checkpoint analysis.}
+\citet{biderman2023pythia} released the \pythia suite---eight model sizes from 14M to 12B parameters, each with 154 checkpoints---enabling controlled analysis of training dynamics across scales.
+This resource is central to our validation experiments.
+The broader study of training dynamics typically focuses on loss curves, gradient statistics, and Hessian eigenspectra~\citep{li2018visualizing}.
+Our topological features complement these standard metrics by capturing qualitative structural changes in the weight space---such as the merging of neuron clusters or the formation of loops---that scalar statistics cannot detect.

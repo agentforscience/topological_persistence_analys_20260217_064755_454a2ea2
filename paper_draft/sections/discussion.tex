@@ -1,0 +1,30 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\para{Why does $\Hzero$ persistence track loss?}
+The strong anticorrelation between $\Hzero$ total persistence and training loss ($\rho$ up to $-0.91$) has an intuitive interpretation.
+During training, the weight vectors of individual neurons evolve from near-random initializations toward structured configurations aligned with the data distribution.
+The VR filtration captures how ``spread out'' these weight vectors are in parameter space: as training progresses, the point cloud develops more persistent connected components (higher $\TP_0$), reflecting increased differentiation among neurons.
+The monotonic strengthening of this correlation with model size suggests that larger models develop richer weight-space geometry---a deeper structural change that the scalar loss curve compresses into a single number.
+
+\para{The neural persistence sign reversal.}
+The size-dependent sign reversal of the NP--loss correlation (\Tabref{tab:np_correlation}) is a surprising finding.
+In the smallest model (single-layer, 3K parameters), higher NP correlates with lower loss, matching \citet{rieck2019neural}'s findings for simple networks.
+In larger multi-layer models, the relationship inverts.
+We hypothesize this reflects a qualitative shift in what NP measures: in shallow networks, training primarily increases weight magnitude differentiation (boosting NP); in deeper networks, training reorganizes weight structure across layers in ways that may temporarily decrease per-layer NP while improving global function approximation.
+Resolving this mechanistic question is an important direction for future work.
+
+\para{When are topological features useful for prediction?}
+Our prediction experiments (\Tabref{tab:prediction}) reveal a clear pattern: topological features add noise at 20\% of training but provide substantial improvement at 30--50\%.
+This aligns with the phase transition analysis (\Tabref{tab:phase_transitions}): the rapid-change phase of neural persistence occupies the first 4--6\% of training, and topological features do not stabilize into predictive patterns until roughly 30\% of training.
+In practice, this means topological monitoring is most valuable in the middle-to-late portion of training, where loss curves may appear to have converged but structural changes in the weight space are still ongoing.
+
+\para{Limitations.}
+Our study has several important limitations.
+First, our largest custom model has only 97K parameters---orders of magnitude smaller than production LLMs.
+While \pythia-14m validation narrows this gap, the distance to GPT-scale models (100B+) remains vast.
+Second, character-level tokenization may produce different weight-space geometry than BPE-tokenized models; this was a deliberate simplification for controlled experiments.
+Third, all models share the same decoder-only transformer architecture; generalization to encoder-decoder or state-space models is untested.
+Fourth, our prediction model is a simple heuristic; more sophisticated approaches (e.g., regression on persistence images) could likely improve performance.
+Fifth, with only five model sizes, our power-law fits for TDA feature scaling have limited statistical power ($n = 5$).
+Finally, while neural persistence scales near-linearly with layer size, full Vietoris-Rips persistence on billion-parameter weight spaces would require aggressive subsampling strategies beyond those tested here.

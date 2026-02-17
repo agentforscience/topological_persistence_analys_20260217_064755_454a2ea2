@@ -1,0 +1,39 @@
+{
+  "seed": 42,
+  "num_steps": 5000,
+  "checkpoint_interval": 100,
+  "device": "cuda",
+  "total_time_seconds": 250.399267911911,
+  "models": {
+    "tiny-3k": {
+      "n_params": 0,
+      "final_loss": 2.4662742614746094,
+      "min_loss": 2.4438228607177734,
+      "num_checkpoints": 51
+    },
+    "small-7k": {
+      "n_params": 0,
+      "final_loss": 2.0992591381073,
+      "min_loss": 2.0346274375915527,
+      "num_checkpoints": 51
+    },
+    "med-21k": {
+      "n_params": 0,
+      "final_loss": 1.852592945098877,
+      "min_loss": 1.781159520149231,
+      "num_checkpoints": 51
+    },
+    "large-46k": {
+      "n_params": 0,
+      "final_loss": 1.653114914894104,
+      "min_loss": 1.597213864326477,
+      "num_checkpoints": 51
+    },
+    "xl-97k": {
+      "n_params": 0,
+      "final_loss": 1.4676026105880737,
+      "min_loss": 1.4305741786956787,
+      "num_checkpoints": 51
+    }
+  }
+}

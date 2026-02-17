@@ -1,0 +1,16 @@
+# Model weight files (large binaries)
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+
+# HuggingFace cache
+.cache/
+
+# Specific patterns
+pythia_checkpoints/*/step_*/pytorch_model.bin
+pythia_checkpoints/*/step_*/model.safetensors
+
+# Synthetic data (can be regenerated)
+*.npz

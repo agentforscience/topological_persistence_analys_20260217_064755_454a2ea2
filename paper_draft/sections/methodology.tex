@@ -1,0 +1,87 @@
+\section{Methodology}
+\label{sec:methodology}
+
+We first describe our model family and training setup (\secref{sec:models}), then define the two topological feature classes we extract (\secref{sec:tda_features}), and finally outline the analysis pipeline (\secref{sec:analysis}).
+
+\subsection{Model Family and Training}
+\label{sec:models}
+
+We train five GPT-style decoder-only transformer language models spanning approximately 30$\times$ in parameter count.
+All models use the same architecture template (causal self-attention, feedforward layers with GELU activation, learned positional embeddings) and differ only in hidden dimension, number of layers, and number of attention heads.
+\Tabref{tab:models} summarizes the configurations.
+
+\begin{table}[t]
+    \centering
+    \caption{Model configurations. All models are decoder-only transformers with character-level tokenization (vocab size 128, context length 128). Final loss is cross-entropy on the \wikitext validation set.}
+    \label{tab:models}
+    \begin{tabular}{@{}lccccc@{}}
+        \toprule
+        Model & Parameters & Hidden Dim & Layers & Heads & Final Loss \\
+        \midrule
+        \textsc{Tiny-3k}  & 2,936  & 8  & 1 & 1 & 2.466 \\
+        \textsc{Small-7k} & 7,408  & 16 & 1 & 2 & 2.099 \\
+        \textsc{Med-21k}  & 20,640 & 24 & 2 & 2 & 1.853 \\
+        \textsc{Large-46k}& 46,368 & 32 & 3 & 4 & 1.653 \\
+        \textsc{XL-97k}   & 97,200 & 48 & 3 & 4 & {\bf 1.468} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\para{Training configuration.}
+We train on \wikitext (10.9M characters) using character-level tokenization (vocab size 128, sequence length 128).
+Character-level tokenization avoids BPE artifacts and provides a controlled setting for studying weight-space geometry.
+All models are trained for 5,000 steps with batch size 64, AdamW optimizer (learning rate $3 \times 10^{-3}$, weight decay 0.01), cosine learning rate schedule with 200-step warmup, and gradient clipping at max norm 1.0.
+We save checkpoints every 100 steps, yielding 51 checkpoints per model (255 total across all five models).
+All training uses a fixed seed (42) for reproducibility.
+
+\para{Validation model.}
+To test whether our findings generalize beyond small controlled models, we analyze \pythia-14m~\citep{biderman2023pythia}, a 14M-parameter GPT-NeoX model trained on The Pile.
+We use 7 checkpoints spanning the full training trajectory (step 0 to 143,000).
+
+\subsection{Topological Feature Extraction}
+\label{sec:tda_features}
+
+At each checkpoint, we compute two complementary topological summaries of the weight space.
+
+\para{Neural persistence.}
+Following \citet{rieck2019neural}, we treat each linear layer as a bipartite graph $G_\ell = (V_\ell^{\mathrm{in}}, V_\ell^{\mathrm{out}}, E_\ell)$ where edge weights are the absolute values of the corresponding weight matrix entries.
+We construct a \emph{descending filtration} by adding edges in order of decreasing absolute weight.
+The $\Hzero$ persistent homology of this filtration tracks the merging of connected components: initially each node is its own component, and adding each edge either merges two components (which ``kills'' a feature, recorded as a death event) or connects already-connected nodes.
+The \emph{neural persistence} of layer $\ell$ is the normalized total persistence:
+\begin{equation}
+    \NP(\ell) = \frac{1}{|V_\ell| - 1} \sum_{(b_i, d_i) \in \mathrm{PD}_0(G_\ell)} (b_i - d_i),
+    \label{eq:neural_persistence}
+\end{equation}
+where $\mathrm{PD}_0(G_\ell)$ is the $\Hzero$ persistence diagram and $|V_\ell|$ is the number of nodes.
+We aggregate across layers by taking the mean neural persistence $\overline{\NP} = \frac{1}{L}\sum_{\ell=1}^{L} \NP(\ell)$.
+This computation runs in $O(|E_\ell| \cdot \alpha(|V_\ell|))$ time via union-find, where $\alpha$ is the inverse Ackermann function.
+
+\para{Vietoris-Rips persistence.}
+We treat the rows of each weight matrix $\mW_\ell \in \sR^{n_{\mathrm{out}} \times n_{\mathrm{in}}}$ as a point cloud in $\sR^{n_{\mathrm{in}}}$, where each point represents a neuron's incoming weight vector.
+We compute the Vietoris-Rips persistent homology~\citep{zomorodian2005computing} of this point cloud up to dimension 1, obtaining persistence diagrams $\mathrm{PD}_0$ and $\mathrm{PD}_1$.
+The \emph{$\Hzero$ total persistence} is $\TP_0 = \sum_{(b_i, d_i) \in \mathrm{PD}_0} (d_i - b_i)$, which measures the total lifetime of connected components in the VR filtration.
+We also compute $\Hone$ total persistence $\TP_1$, which measures the total lifetime of loops.
+To keep computation tractable, we subsample to at most 200 points per layer when necessary and use ripser~\citep{tralie2018ripser} for efficient VR computation.
+We aggregate across layers by summing: $\TP_k^{\mathrm{total}} = \sum_{\ell} \TP_k(\ell)$.
+
+\subsection{Analysis Pipeline}
+\label{sec:analysis}
+
+\para{Correlation analysis.}
+For each model, we compute Spearman rank correlation between topological features and training loss across the 51 checkpoints.
+We report 95\% bootstrap confidence intervals (1,000 resamples) for all correlation estimates.
+
+\para{Scaling analysis.}
+We fit power laws $f(N) = a \cdot N^b + c$ to relate topological features at the final checkpoint to model size $N$, and report $R^2$ and Spearman $\rho$ for each feature.
+
+\para{Prediction experiments.}
+We test whether topological features improve prediction of final model loss using early training data.
+Given the first $k\%$ of checkpoints, we compare three approaches:
+(1) \emph{Loss-only}: power-law extrapolation $L(t) = a \cdot t^{-b} + c$ fit to the loss curve;
+(2) \emph{TDA-only}: prediction based on the rate of change of neural persistence and remaining training steps;
+(3) \emph{Combined}: average of the loss-only and TDA-only predictions.
+We evaluate using mean absolute error (MAE) of the predicted final loss across all five models.
+
+\para{Phase transition detection.}
+We detect phase transitions in training dynamics by computing the rate of change of neural persistence between consecutive checkpoints, $\Delta\NP(t) = \NP(t) - \NP(t-1)$.
+We identify the step of maximum $|\Delta\NP|$ and the step at which $|\Delta\NP|$ drops below 10\% of its peak value (the ``diminishing returns'' point).

@@ -1,0 +1,17 @@
+{
+  "model_name": "EleutherAI/pythia-14m",
+  "checkpoint_step": 100000,
+  "revision": "step100000",
+  "architecture": [
+    "GPTNeoXForCausalLM"
+  ],
+  "model_type": "gpt_neox",
+  "hidden_size": 128,
+  "num_hidden_layers": 6,
+  "num_attention_heads": 4,
+  "intermediate_size": 512,
+  "vocab_size": 50304,
+  "max_position_embeddings": 2048,
+  "estimated_parameters": 14064512,
+  "estimated_parameters_millions": 14.06
+}

@@ -1,0 +1,116 @@
+{
+  "model_name": "EleutherAI/pythia-14m",
+  "num_checkpoints": 6,
+  "checkpoints": [
+    0,
+    1000,
+    10000,
+    50000,
+    100000,
+    143000
+  ],
+  "summaries": [
+    {
+      "model_name": "EleutherAI/pythia-14m",
+      "checkpoint_step": 0,
+      "revision": "step0",
+      "architecture": [
+        "GPTNeoXForCausalLM"
+      ],
+      "model_type": "gpt_neox",
+      "hidden_size": 128,
+      "num_hidden_layers": 6,
+      "num_attention_heads": 4,
+      "intermediate_size": 512,
+      "vocab_size": 50304,
+      "max_position_embeddings": 2048,
+      "estimated_parameters": 14064512,
+      "estimated_parameters_millions": 14.06
+    },
+    {
+      "model_name": "EleutherAI/pythia-14m",
+      "checkpoint_step": 1000,
+      "revision": "step1000",
+      "architecture": [
+        "GPTNeoXForCausalLM"
+      ],
+      "model_type": "gpt_neox",
+      "hidden_size": 128,
+      "num_hidden_layers": 6,
+      "num_attention_heads": 4,
+      "intermediate_size": 512,
+      "vocab_size": 50304,
+      "max_position_embeddings": 2048,
+      "estimated_parameters": 14064512,
+      "estimated_parameters_millions": 14.06
+    },
+    {
+      "model_name": "EleutherAI/pythia-14m",
+      "checkpoint_step": 10000,
+      "revision": "step10000",
+      "architecture": [
+        "GPTNeoXForCausalLM"
+      ],
+      "model_type": "gpt_neox",
+      "hidden_size": 128,
+      "num_hidden_layers": 6,
+      "num_attention_heads": 4,
+      "intermediate_size": 512,
+      "vocab_size": 50304,
+      "max_position_embeddings": 2048,
+      "estimated_parameters": 14064512,
+      "estimated_parameters_millions": 14.06
+    },
+    {
+      "model_name": "EleutherAI/pythia-14m",
+      "checkpoint_step": 50000,
+      "revision": "step50000",
+      "architecture": [
+        "GPTNeoXForCausalLM"
+      ],
+      "model_type": "gpt_neox",
+      "hidden_size": 128,
+      "num_hidden_layers": 6,
+      "num_attention_heads": 4,
+      "intermediate_size": 512,
+      "vocab_size": 50304,
+      "max_position_embeddings": 2048,
+      "estimated_parameters": 14064512,
+      "estimated_parameters_millions": 14.06
+    },
+    {
+      "model_name": "EleutherAI/pythia-14m",
+      "checkpoint_step": 100000,
+      "revision": "step100000",
+      "architecture": [
+        "GPTNeoXForCausalLM"
+      ],
+      "model_type": "gpt_neox",
+      "hidden_size": 128,
+      "num_hidden_layers": 6,
+      "num_attention_heads": 4,
+      "intermediate_size": 512,
+      "vocab_size": 50304,
+      "max_position_embeddings": 2048,
+      "estimated_parameters": 14064512,
+      "estimated_parameters_millions": 14.06
+    },
+    {
+      "model_name": "EleutherAI/pythia-14m",
+      "checkpoint_step": 143000,
+      "revision": "step143000",
+      "architecture": [
+        "GPTNeoXForCausalLM"
+      ],
+      "model_type": "gpt_neox",
+      "hidden_size": 128,
+      "num_hidden_layers": 6,
+      "num_attention_heads": 4,
+      "intermediate_size": 512,
+      "vocab_size": 50304,
+      "max_position_embeddings": 2048,
+      "estimated_parameters": 14064512,
+      "estimated_parameters_millions": 14.06
+    }
+  ]
+}

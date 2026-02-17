@@ -1,0 +1,50 @@
+\documentclass{article}
+\usepackage[final]{neurips_2025}
+
+% Required packages
+\usepackage[hidelinks]{hyperref}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{natbib}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{multirow}
+
+% Import command files
+\input{commands/math}
+\input{commands/general}
+\input{commands/macros}
+
+% Caption spacing
+\usepackage{caption}
+\captionsetup[figure]{aboveskip=4pt,belowskip=4pt}
+\captionsetup[table]{aboveskip=4pt,belowskip=4pt}
+\captionsetup[subfigure]{aboveskip=2pt,belowskip=2pt}
+
+\title{Topological Persistence of Transformer Weight Spaces\\Tracks Training Dynamics and Improves Scaling Prediction}
+
+\author{
+  Anonymous Authors
+}
+
+\begin{document}
+
+\maketitle
+
+\input{sections/abstract}
+\input{sections/introduction}
+\input{sections/related_work}
+\input{sections/methodology}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\clearpage
+\appendix
+\input{appendix/supplementary}
+
+\end{document}

@@ -1,0 +1,10 @@
+PDF: papers/geniesse2024_visualizing_loss_topological_profiles.pdf
+Total pages: 15
+Pages per chunk: 3
+
+Chunks:
+  geniesse2024_visualizing_loss_topological_profiles_chunk_001.pdf: pages 1-3
+  geniesse2024_visualizing_loss_topological_profiles_chunk_002.pdf: pages 4-6
+  geniesse2024_visualizing_loss_topological_profiles_chunk_003.pdf: pages 7-9
+  geniesse2024_visualizing_loss_topological_profiles_chunk_004.pdf: pages 10-12
+  geniesse2024_visualizing_loss_topological_profiles_chunk_005.pdf: pages 13-15

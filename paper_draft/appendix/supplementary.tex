@@ -1,0 +1,80 @@
+\section{Supplementary Material}
+\label{sec:appendix}
+
+\subsection{Training Configuration Details}
+\label{sec:app_training}
+
+All models are trained using PyTorch 2.6.0 with CUDA 12.4 on two NVIDIA RTX 3090 GPUs (24GB each).
+Total training time for all five models is approximately 250 seconds.
+TDA feature extraction for all 255 checkpoints takes approximately 16 seconds using ripser 0.6.14.
+\Tabref{tab:software} lists the software versions used.
+
+\begin{table}[h]
+    \centering
+    \caption{Software versions used in all experiments}
+    \label{tab:software}
+    \begin{tabular}{@{}llr@{}}
+        \toprule
+        Library & Version & Purpose \\
+        \midrule
+        PyTorch       & 2.6.0+cu124 & Model training \\
+        ripser~\citep{tralie2018ripser} & 0.6.14 & VR persistent homology \\
+        giotto-tda~\citep{tauzin2021giotto} & 0.6.2 & TDA utilities \\
+        persim        & 0.3.8       & Persistence diagram distances \\
+        SciPy         & 1.17.0      & Statistical analysis \\
+        Transformers  & 5.2.0       & \pythia model loading \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Additional Figures}
+\label{sec:app_figures}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/training_curves.png}
+    \caption{Training loss curves for all five model sizes. All models show monotonically decreasing loss, with larger models achieving lower final loss as expected from neural scaling laws}
+    \label{fig:training_curves}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/neural_persistence_evolution.png}
+    \caption{Neural persistence evolution during training. All models show rapid NP change in early training followed by gradual stabilization. Larger models achieve higher final NP values}
+    \label{fig:np_evolution}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/vr_persistence_evolution.png}
+    \caption{Vietoris-Rips $\Hzero$ and $\Hone$ persistence evolution during training. $\Hzero$ total persistence increases during training (anticorrelating with loss), while $\Hone$ shows more varied behavior across model sizes}
+    \label{fig:vr_evolution}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/correlation_heatmap.png}
+    \caption{Spearman correlation heatmap between all topological features and training loss across model sizes. $\Hzero$ total persistence shows the most consistent and strongest anticorrelation with loss}
+    \label{fig:correlation_heatmap}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/prediction_comparison.png}
+    \caption{Comparison of final loss prediction accuracy across methods and training fractions. The combined TDA+loss predictor matches or outperforms loss-only extrapolation for training fractions $\geq$30\%}
+    \label{fig:prediction_comparison}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/pythia_validation.png}
+    \caption{\pythia-14m validation results. \figleft: Neural persistence increases monotonically during training. \figright: $\Hzero$ total persistence decreases, indicating increasing connectivity of the weight-space point cloud}
+    \label{fig:pythia_validation}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/scaling_relationships.png}
+    \caption{Scaling relationships between topological features and model size (log-log scale). $\Hzero$ total persistence scales as a power law with exponent $+0.204$ ($R^2 = 0.852$)}
+    \label{fig:scaling}
+\end{figure}

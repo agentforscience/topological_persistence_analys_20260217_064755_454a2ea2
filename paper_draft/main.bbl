@@ -1,0 +1,148 @@
+\begin{thebibliography}{21}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Ballarin et~al.(2024)]{ballarin2024topological}
+Marco Ballarin et~al.
+\newblock A topological description of loss surfaces based on {Betti} numbers.
+\newblock \emph{Neural Networks}, 2024.
+
+\bibitem[Ballester et~al.(2024)Ballester, Casacuberta, and
+  Escalera]{ballester2024tda}
+Rub{\'e}n Ballester, Carles Casacuberta, and Sergio Escalera.
+\newblock {TDA} for neural network analysis: A comprehensive survey.
+\newblock \emph{arXiv preprint arXiv:2312.05840}, 2024.
+
+\bibitem[Biderman et~al.(2023)Biderman, Schoelkopf, Anthony, Bradley, O'Brien,
+  Hallahan, Khan, Purohit, Prashanth, Raff, et~al.]{biderman2023pythia}
+Stella Biderman, Hailey Schoelkopf, Quentin Anthony, Herbie Bradley, Kyle
+  O'Brien, Eric Hallahan, Mohammad~Aflah Khan, Shivanshu Purohit, USVSN~Sai
+  Prashanth, Edward Raff, et~al.
+\newblock Pythia: A suite for analyzing large language models across training
+  and scaling.
+\newblock In \emph{International Conference on Machine Learning}, 2023.
+
+\bibitem[Birdal et~al.(2021)Birdal, Lou, Guibas, and
+  Siber]{birdal2021intrinsic}
+Tolga Birdal, Aaron Lou, Leonidas~J Guibas, and Umut Siber.
+\newblock Intrinsic dimension, persistent homology and generalization in neural
+  networks.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2021.
+
+\bibitem[Bordelon et~al.(2024)Bordelon, Atanasov, and
+  Pehlevan]{bordelon2024dynamical}
+Blake Bordelon, Alexander Atanasov, and Cengiz Pehlevan.
+\newblock A dynamical model of neural scaling laws.
+\newblock In \emph{International Conference on Machine Learning}, 2024.
+
+\bibitem[Carlsson(2009)]{carlsson2009topology}
+Gunnar Carlsson.
+\newblock Topology and data.
+\newblock \emph{Bulletin of the American Mathematical Society}, 46\penalty0
+  (2):\penalty0 255--308, 2009.
+
+\bibitem[Edelsbrunner et~al.(2002)Edelsbrunner, Letscher, and
+  Zomorodian]{edelsbrunner2002topological}
+Herbert Edelsbrunner, David Letscher, and Afra Zomorodian.
+\newblock Topological persistence and simplification.
+\newblock \emph{Discrete \& Computational Geometry}, 28\penalty0 (4):\penalty0
+  511--533, 2002.
+
+\bibitem[Gadre et~al.(2025)]{gadre2025llms}
+Samir~Yitzhak Gadre et~al.
+\newblock {LLMs} on the line: Data determines loss-to-loss scaling laws.
+\newblock \emph{arXiv preprint arXiv:2502.12120}, 2025.
+
+\bibitem[Geniesse et~al.(2024)]{geniesse2024visualizing}
+Caleb Geniesse et~al.
+\newblock Visualizing loss functions as topological landscape profiles.
+\newblock In \emph{arXiv preprint arXiv:2411.12136}, 2024.
+
+\bibitem[Hoffmann et~al.(2022)Hoffmann, Borgeaud, Mensch, Buchatskaya, Cai,
+  Rutherford, de~Las~Casas, Hendricks, Welbl, Clark,
+  et~al.]{hoffmann2022training}
+Jordan Hoffmann, Sebastian Borgeaud, Arthur Mensch, Elena Buchatskaya, Trevor
+  Cai, Eliza Rutherford, Diego de~Las~Casas, Lisa~Anne Hendricks, Johannes
+  Welbl, Aidan Clark, et~al.
+\newblock Training compute-optimal large language models.
+\newblock \emph{arXiv preprint arXiv:2203.15556}, 2022.
+
+\bibitem[Horoi et~al.(2021)Horoi, Huang, Rieck, Lajoie, Wolf, and
+  Krishnaswamy]{horoi2021exploring}
+Stefan Horoi, Jessie Huang, Bastian Rieck, Guillaume Lajoie, Guy Wolf, and
+  Smita Krishnaswamy.
+\newblock Exploring the geometry and topology of neural network loss
+  landscapes.
+\newblock \emph{arXiv preprint arXiv:2102.00485}, 2021.
+
+\bibitem[Isik et~al.(2024)]{isik2024scaling}
+Berivan Isik et~al.
+\newblock Scaling laws for downstream task performance of large language
+  models.
+\newblock \emph{arXiv preprint arXiv:2402.04177}, 2024.
+
+\bibitem[Kaplan et~al.(2020)Kaplan, McCandlish, Henighan, Brown, Chess, Child,
+  Gray, Radford, Wu, and Amodei]{kaplan2020scaling}
+Jared Kaplan, Sam McCandlish, Tom Henighan, Tom~B Brown, Benjamin Chess, Rewon
+  Child, Scott Gray, Alec Radford, Jeffrey Wu, and Dario Amodei.
+\newblock Scaling laws for neural language models.
+\newblock \emph{arXiv preprint arXiv:2001.08361}, 2020.
+
+\bibitem[Li et~al.(2018)Li, Xu, Taylor, Studer, and
+  Goldstein]{li2018visualizing}
+Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, and Tom Goldstein.
+\newblock Visualizing the loss landscape of neural nets.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2018.
+
+\bibitem[Luo et~al.(2025)]{luo2025multipower}
+Xingyu Luo et~al.
+\newblock Multi-power law for loss curve prediction.
+\newblock \emph{arXiv preprint arXiv:2501.02751}, 2025.
+
+\bibitem[Porian et~al.(2024)]{porian2024scaling}
+Alexander Porian et~al.
+\newblock Scaling laws and compute-optimal training beyond fixed training
+  durations.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2024.
+
+\bibitem[Rieck et~al.(2019)Rieck, Togninalli, Bock, Moor, Horn, Gumbsch, and
+  Borgwardt]{rieck2019neural}
+Bastian Rieck, Matteo Togninalli, Christian Bock, Michael Moor, Max Horn,
+  Thomas Gumbsch, and Karsten Borgwardt.
+\newblock Neural persistence: A complexity measure for deep neural networks
+  using algebraic topology.
+\newblock In \emph{International Conference on Learning Representations}, 2019.
+
+\bibitem[Tauzin et~al.(2021)Tauzin, Lupo, Tunstall, P{\'e}rez, Caorsi,
+  Medina-Mardones, Dassatti, and Hess]{tauzin2021giotto}
+Guillaume Tauzin, Umberto Lupo, Lewis Tunstall, Julian~Burella P{\'e}rez,
+  Matteo Caorsi, Anibal~M Medina-Mardones, Alberto Dassatti, and Kathryn Hess.
+\newblock giotto-tda: A topological data analysis toolkit for machine learning
+  and data exploration.
+\newblock \emph{Journal of Machine Learning Research}, 22\penalty0
+  (39):\penalty0 1--6, 2021.
+
+\bibitem[Tralie et~al.(2018)Tralie, Saul, and Bar-On]{tralie2018ripser}
+Christopher Tralie, Nathaniel Saul, and Rann Bar-On.
+\newblock Ripser.py: A lean persistent homology library for {Python}.
+\newblock \emph{Journal of Open Source Software}, 3\penalty0 (29):\penalty0
+  925, 2018.
+
+\bibitem[Xie et~al.(2024)Xie, Geniesse, Chen, Yang, Morozov, Mahoney,
+  Maciejewski, and Weber]{xie2024evaluating}
+Tiankai Xie, Caleb Geniesse, Jiaqing Chen, Yaoqing Yang, Dmitriy Morozov,
+  Michael Mahoney, Ross Maciejewski, and Gunther Weber.
+\newblock Evaluating loss landscapes from a topology perspective.
+\newblock In \emph{NeurIPS Workshop on Topology, Algebra, and Geometry in
+  Machine Learning}, 2024.
+
+\bibitem[Zomorodian and Carlsson(2005)]{zomorodian2005computing}
+Afra Zomorodian and Gunnar Carlsson.
+\newblock Computing persistent homology.
+\newblock In \emph{Discrete \& Computational Geometry}, volume~33, pages
+  249--274, 2005.
+
+\end{thebibliography}

@@ -1,0 +1,96 @@
+{
+  "description": "Synthetic training loss curves for topological persistence analysis",
+  "model_sizes_millions": [
+    14,
+    70,
+    160,
+    410,
+    1000,
+    2800
+  ],
+  "num_steps": 143000,
+  "log_interval": 100,
+  "scaling_exponent": 0.076,
+  "irreducible_loss": 1.69,
+  "seed": 42,
+  "models": [
+    {
+      "size_millions": 14,
+      "array_prefix": "model_14m",
+      "num_data_points": 1430,
+      "initial_loss": 13.697015434428396,
+      "final_loss": 7.94408233525804,
+      "min_loss": 7.942758944078109,
+      "max_loss": 13.697015434428396,
+      "mean_loss": 9.415897991166332,
+      "loss_reduction_percent": 42.001362462584076,
+      "mean_grad_norm": 0.5477424575785237,
+      "mean_curvature": 0.6724057831734852
+    },
+    {
+      "size_millions": 70,
+      "array_prefix": "model_70m",
+      "num_data_points": 1430,
+      "initial_loss": 12.648724466333089,
+      "final_loss": 6.962586899536297,
+      "min_loss": 6.962586899536297,
+      "max_loss": 12.649375270467276,
+      "mean_loss": 8.412419545525445,
+      "loss_reduction_percent": 44.95423694247982,
+      "mean_grad_norm": 1.0254347560113168,
+      "mean_curvature": 0.6693189267842512
+    },
+    {
+      "size_millions": 160,
+      "array_prefix": "model_160m",
+      "num_data_points": 1430,
+      "initial_loss": 12.171997330490093,
+      "final_loss": 6.525070068310664,
+      "min_loss": 6.5248543863977195,
+      "max_loss": 12.171997330490093,
+      "mean_loss": 7.952287164651726,
+      "loss_reduction_percent": 46.392774405513784,
+      "mean_grad_norm": 1.4924659352301082,
+      "mean_curvature": 0.6710417173617401
+    },
+    {
+      "size_millions": 410,
+      "array_prefix": "model_410m",
+      "num_data_points": 1430,
+      "initial_loss": 11.65222266070173,
+      "final_loss": 6.067668923074253,
+      "min_loss": 6.067668923074253,
+      "max_loss": 11.65222266070173,
+      "mean_loss": 7.46937145918156,
+      "loss_reduction_percent": 47.926939780012404,
+      "mean_grad_norm": 2.540877656783145,
+      "mean_curvature": 0.6742946741209808
+    },
+    {
+      "size_millions": 1000,
+      "array_prefix": "model_1000m",
+      "num_data_points": 1430,
+      "initial_loss": 11.196414990814853,
+      "final_loss": 5.6750772468829,
+      "min_loss": 5.6750772468829,
+      "max_loss": 11.196414990814853,
+      "mean_loss": 7.047939213249761,
+      "loss_reduction_percent": 49.31344317320737,
+      "mean_grad_norm": 3.5486803259316932,
+      "mean_curvature": 0.6701656345882047
+    },
+    {
+      "size_millions": 2800,
+      "array_prefix": "model_2800m",
+      "num_data_points": 1430,
+      "initial_loss": 10.711323159080186,
+      "final_loss": 5.264897863976158,
+      "min_loss": 5.264897863976158,
+      "max_loss": 10.711323159080186,
+      "mean_loss": 6.603107834929903,
+      "loss_reduction_percent": 50.847362311975374,
+      "mean_grad_norm": 6.048158491608768,
+      "mean_curvature": 0.6738687830936363
+    }
+  ]
+}

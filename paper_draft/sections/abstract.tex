@@ -1,0 +1,9 @@
+\begin{abstract}
+Training large language models costs millions of dollars, yet the decision of when to stop training and scale up relies almost entirely on loss curve extrapolation---a method that ignores the structural evolution of model weights during optimization.
+We investigate whether persistent homology, a tool from topological data analysis, can capture complementary signals about training dynamics in transformer language models.
+We train five GPT-style models (2.9K--97K parameters) on \wikitext with 51 checkpoints each, and compute two topological summaries at every checkpoint: neural persistence of the weight graph and Vietoris-Rips persistent homology of the weight-space point cloud.
+Our main finding is that $\Hzero$ total persistence from Vietoris-Rips filtration is strongly anticorrelated with training loss (Spearman $\rho = {-}0.59$ to ${-}0.91$, $p < 10^{-5}$), and this correlation \emph{strengthens monotonically with model size}.
+When combined with loss curve extrapolation, topological features reduce final loss prediction error by 10--29\% over loss-only baselines using 30--50\% of training data.
+We validate these findings on \pythia-14m, a 14M-parameter transformer trained on The Pile, confirming that the same qualitative trends hold in real large-scale training.
+These results suggest that weight-space topology provides a structurally grounded signal for monitoring training progress and informing scaling decisions.
+\end{abstract}

@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "stages": {
+    "resource_finder": {
+      "success": true,
+      "completion_marker": "/workspaces/topological_persistence_analys_20260217_064755_454a2ea2/.resource_finder_complete",
+      "outputs": {
+        "literature_review": "/workspaces/topological_persistence_analys_20260217_064755_454a2ea2/literature_review.md",
+        "resources_catalog": "/workspaces/topological_persistence_analys_20260217_064755_454a2ea2/resources.md",
+        "papers_dir": "/workspaces/topological_persistence_analys_20260217_064755_454a2ea2/papers",
+        "datasets_dir": "/workspaces/topological_persistence_analys_20260217_064755_454a2ea2/datasets",
+        "code_dir": "/workspaces/topological_persistence_analys_20260217_064755_454a2ea2/code"
+      },
+      "log_file": "/workspaces/topological_persistence_analys_20260217_064755_454a2ea2/logs/resource_finder_claude.log",
+      "transcript_file": "/workspaces/topological_persistence_analys_20260217_064755_454a2ea2/logs/resource_finder_claude_transcript.jsonl",
+      "elapsed_time": 996.252183675766
+    },
+    "experiment_runner": {
+      "success": true,
+      "return_code": 0,
+      "elapsed_time": 1144.8350389003754,
+      "log_file": "/workspaces/topological_persistence_analys_20260217_064755_454a2ea2/logs/execution_claude.log",
+      "transcript_file": "/workspaces/topological_persistence_analys_20260217_064755_454a2ea2/logs/execution_claude_transcript.jsonl"
+    }
+  },
+  "work_dir": "/workspaces/topological_persistence_analys_20260217_064755_454a2ea2"
+}

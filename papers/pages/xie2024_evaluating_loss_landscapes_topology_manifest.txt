@@ -1,0 +1,9 @@
+PDF: papers/xie2024_evaluating_loss_landscapes_topology.pdf
+Total pages: 10
+Pages per chunk: 3
+
+Chunks:
+  xie2024_evaluating_loss_landscapes_topology_chunk_001.pdf: pages 1-3
+  xie2024_evaluating_loss_landscapes_topology_chunk_002.pdf: pages 4-6
+  xie2024_evaluating_loss_landscapes_topology_chunk_003.pdf: pages 7-9
+  xie2024_evaluating_loss_landscapes_topology_chunk_004.pdf: page 10
